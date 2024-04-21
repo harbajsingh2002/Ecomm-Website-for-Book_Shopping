@@ -1,4 +1,4 @@
-Project Name:Ecomm Website for Book_Shopping
+**Project Name:Ecomm Website for Book_Shopping**
 
 The project is an e-commerce platform that allows users to browse and purchase products online. It is built using a microservices architecture, which is made up of distinct components, or microservices, that are connected by REST APIs. The same microservices on the back end can be used to create many user interfaces. Though the quirks of this architectural style fascinate development teams, the benefits to corporations are considerable.
 
