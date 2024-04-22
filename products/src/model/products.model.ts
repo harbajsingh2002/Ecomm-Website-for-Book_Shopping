@@ -1,7 +1,20 @@
 import mongoose, { Schema } from 'mongoose'
 import IBooks from '../utilis/interface/IBooks'
+import timeStamp from '../utilis/moment/moment'
+import { v4 as uuidv4 } from 'uuid'
+//import { nanoid } from 'nanoid'
 
 const productSchema = new Schema<IBooks>({
+  id: {
+    type: String,
+    default: uuidv4,
+    index: { unique: true },
+    required: true,
+  },
+  // _id: {
+  //   type: String,
+  //   default: () => nanoid(),
+  // },
   title: {
     type: String,
     required: true,
@@ -9,7 +22,6 @@ const productSchema = new Schema<IBooks>({
   author: {
     type: String,
     required: true,
-    unique: true,
   },
   description: {
     type: String,
@@ -21,8 +33,29 @@ const productSchema = new Schema<IBooks>({
   price: {
     type: Number,
     required: true,
-    unique: true,
   },
+  // image: {
+  //   type: Binary,
+  //   required: false,
+  // },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
+  deleted_At: {
+    type: Date,
+    allowNull: true,
+  },
+  deleted_by: {
+    // type: Number,
+    type: String,
+    allowNull: true,
+  },
+  timeStamp,
 })
 
 const Books = mongoose.model<IBooks>('Books', productSchema)
