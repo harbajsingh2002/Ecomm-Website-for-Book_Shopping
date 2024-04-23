@@ -1,13 +1,14 @@
 import express, { Response, Request } from 'express'
 import { productController } from '../controller/products.controller'
+import imageStorage from '../utilis/fileUpload/file.upload'
 
 const router = express.Router()
 
 //ROute to add new Book
-router.post('/create', productController.createNewProduct)
+router.post('/', productController.createNewProduct)
 
 //route to get all the books
-router.get('/books', productController.getAllBooks)
+router.get('/', productController.getAllBooks)
 
 //Route to get book by Id
 router.get('/:id', productController.getBookById)
@@ -17,5 +18,12 @@ router.put('/:id', productController.updateBook)
 
 //router to delete the book
 router.delete('/:id', productController.deleteBookById)
+
+//router to upload image of product
+router.post(
+  '/singleImage',
+  imageStorage.single('image'),
+  productController.uploadImage,
+)
 
 export default router

@@ -1,7 +1,7 @@
-import express, { Response, Request } from "express";
+import express, { Response, Request } from 'express'
 //import Store from "../model/store.model";
-import { StoreController } from "../controller/store.controller";
-const router = express.Router();
+import { StoreController } from '../controller/store.controller'
+const router = express.Router()
 
 // router.post("/", async (req: Request, res: Response) => {
 //   try {
@@ -13,11 +13,11 @@ const router = express.Router();
 //   }
 // });
 
-router.post("/create", StoreController.createNewStore);
-router.post("/login", StoreController.login);
-router.get("/all", StoreController.getAllStore);
-router.get("/:id", StoreController.getStoreById);
-router.put("/:id", StoreController.updateStore);
-router.delete("/:id", StoreController.deleteStore);
+router.post('/', StoreController.createNewStore)
+router.post('/login', StoreController.login)
+router.get('/', StoreController.getAllStore)
+router.get('/:id', StoreController.getStoreById)
+router.put('/:id', StoreController.updateStore)
+router.delete('/:id', StoreController.deleteStore)
 
-export default router;
+export default router

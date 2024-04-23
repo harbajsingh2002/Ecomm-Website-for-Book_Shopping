@@ -1,7 +1,7 @@
-import mongoose, { Schema, model } from "mongoose";
-import IStore from "../utilis/Istore/Istore";
-import timeStamp from "../utilis/moment/moment";
-import { nanoid } from "nanoid";
+import mongoose, { Schema, model } from 'mongoose'
+import IStore from '../utilis/Istore/Istore'
+import timeStamp from '../utilis/moment/moment'
+import { nanoid } from 'nanoid'
 
 export const storeSchema = new Schema<IStore>({
   _id: {
@@ -37,14 +37,13 @@ export const storeSchema = new Schema<IStore>({
     type: Boolean,
     default: true,
   },
-
   isDeleted: {
     type: Boolean,
     default: false,
   },
 
   timeStamp,
-});
+})
 
- const Store= mongoose.model<IStore>("Store", storeSchema);
- export default Store;
+const Store = mongoose.model<IStore>('Store', storeSchema)
+export default Store

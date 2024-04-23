@@ -14,7 +14,7 @@ MongoDB
 Git
 Github
 
-Features:s
+Features:
 User authentication: customers can register, login, and manage their profile information
 Product browsing: customers can browse products by category, filter by price or other attributes, and search for specific products
 Shopping cart: customers can add items to their cart, edit the quantity of items, and remove items from their cart
