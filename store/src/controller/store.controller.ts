@@ -130,7 +130,7 @@ export class StoreController {
     }
   }
 
-  //Get store
+  //Get store by Id
   public static async getStoreById(req: Request, res: Response) {
     try {
       const storeId = req.params.id

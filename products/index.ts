@@ -29,6 +29,8 @@ const port = process.env.PORT || 3001
 //Parsing Request Body:
 app.use(express.json())
 
+app.use(express.urlencoded({ extended: true }))
+
 // API Routes: define routes for handling product-
 app.use('/api/products', productRouter)
 

@@ -2,18 +2,30 @@ import stores from '../model/store.model'
 import bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
 import Store from '../model/store.model'
-import { ParamsDictionary } from 'express-serve-static-core'
-import { json } from 'express'
 import IStore from '../utilis/Istore/Istore'
-
+import valStore from '../validation/store.validation'
+import { error } from 'console'
 export class StoreServices {
   public static async createNewStore(body: IStore) {
     try {
+      //const { error } = await Store.valStore.validate(req.body)
+      // if (error) {
+      //     return res.status(400).json({
+      //         error: error.details.map((err:any) => err.message.replace(/"/g, ''))
+      //     });
+      // }
       const { storeName, email, password, contact, address, description } = body
 
       // Input validation
       if (!storeName || !email || !password) {
         throw new Error('Store name, email, and password are required')
+      }
+      const checkStore = await Store.findOne({
+        $and: [{ email: body.email }, { isDeleted: false }],
+      })
+      if (checkStore) {
+        //return error
+        throw new Error('Email already existed')
       }
 
       const hashedPassword = await bcrypt.hash(body.password, 10)
@@ -89,16 +101,7 @@ export class StoreServices {
   //     const storeListing = await Store.find();
   //     console.log(storeListing);
 
-  //     // return await Store.find({
-  //     //   where: { isDeleted: false },
-  //     //   attributes: ["id", "name", "age", "email"],
-  //     //   order: [["createdAt", "asc"]],
-  //     //   offset: query.page
-  //     //     ? (parseInt(query.page) - 1) * parseInt(query.limit)
-  //     //     : 0,
-  //     //   limit: query.limit ? parseInt(query.limit) : 10,
-  //     // });
-  //     // //return storeListing;
+  //     // return await Store.find()
 
   //     const pagination = query.pagination ? parseInt(query.pagination) : 10;
   //     // PageNumber From which Page to Start

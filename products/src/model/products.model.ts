@@ -34,10 +34,17 @@ const productSchema = new Schema<IBooks>({
     type: Number,
     required: true,
   },
-  // image: {
-  //   type: Binary,
-  //   required: false,
-  // },
+  image: {
+    type: String,
+    required: false,
+  },
+  // images: [
+  //   {
+  //     //Array of object
+  //     type: String,
+  //     required: false,
+  //   },
+  // ],
   isActive: {
     type: Boolean,
     default: true,

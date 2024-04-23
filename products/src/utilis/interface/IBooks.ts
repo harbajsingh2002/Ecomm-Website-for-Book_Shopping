@@ -5,7 +5,8 @@ export default interface IBooks extends Document {
   description: string
   category: string
   price: number
-  image: binary
+  image: string
+  //images:string
   createdAt: boolean
   isDeleted: boolean // lowercase 'boolean'
   deletedBy: boolean
