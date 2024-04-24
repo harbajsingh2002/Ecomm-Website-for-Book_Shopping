@@ -1,6 +1,7 @@
 import express, { Response, Request } from 'express';
 //import Store from "../model/store.model";
 import { userController } from '../controllers/user.controller';
+import auth from '../utilis/auth/user.middleware';
 const router = express.Router();
 
 // router.post("/", async (req: Request, res: Response) => {
@@ -20,15 +21,15 @@ router.post('/create', userController.createNewUser);
 router.post('/login', userController.login);
 
 //find all User
-router.get('/', userController.findAllUser);
+router.get('/', auth, userController.findAllUser);
 
 // find a specific user
 router.get('/:id', userController.findUserById);
 
 // update a specific user
-router.put('/:id', userController.updateUser);
+router.put('/:id', auth, userController.updateUser);
 
 // deletes a specific user
-router.delete('/:id', userController.deleteUser);
+router.delete('/:id', auth, userController.deleteUser);
 
 export default router;

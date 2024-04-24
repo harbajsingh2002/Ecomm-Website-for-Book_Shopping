@@ -16,7 +16,7 @@ export class userController {
       }
     } catch (err: any) {
       // logger.error(message.errorLog('productAdd', 'productController', err))
-      res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.SOMETHING_WENT_WRONG));
+      res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.INTERNAL_SERVER_ERROR));
     }
   }
 
@@ -36,7 +36,7 @@ export class userController {
         res.status(STATUS_CODE.SUCCESS).json(failAction(STATUS_CODE.SUCCESS, MESSAGE.notExist('User')));
       }
     } catch (err: any) {
-      res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.SOMETHING_WENT_WRONG));
+      res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.INTERNAL_SERVER_ERROR));
     }
   }
 
@@ -55,7 +55,7 @@ export class userController {
       res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, findUser, MESSAGE.fetch('Store')));
     } catch (err: any) {
       // logger.error(MESSAGE.errorLog('userList', 'userController', err))
-      res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.SOMETHING_WENT_WRONG));
+      res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.INTERNAL_SERVER_ERROR));
     }
   }
 
@@ -67,7 +67,7 @@ export class userController {
       res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, userData, MESSAGE.fetch('User')));
     } catch (err: any) {
       //logger.error(MESSAGE.errorLog('storeList', 'storeController', err))
-      res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.SOMETHING_WENT_WRONG));
+      res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.INTERNAL_SERVER_ERROR));
     }
   }
 
@@ -75,8 +75,6 @@ export class userController {
   public static async updateUser(req: Request, res: Response) {
     try {
       const userId = req.params.id;
-      //const { name, address, email, password, contact } = req.body;
-
       const findUser = await UserServices.findUserById(userId);
 
       if (!findUser) {
@@ -84,14 +82,12 @@ export class userController {
       }
       const data = await UserServices.updateUser(userId, req.body);
 
-      //const data = await StoreServices.updateStore({id:req.params});
       if (data) {
         res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, data, MESSAGE.update('User')));
       }
     } catch (err: any) {
       console.log('err', err.MESSAGE);
-      //logger.error(MESSAGE.errorLog('userUpdate', 'userController', err))
-      res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.SOMETHING_WENT_WRONG));
+      res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.INTERNAL_SERVER_ERROR));
     }
   }
 
@@ -102,7 +98,7 @@ export class userController {
       res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, MESSAGE.delete('User')));
     } catch (err: any) {
       //logger.error(MESSAGE.errorLog('userDelete', 'userController', err))
-      res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.SOMETHING_WENT_WRONG));
+      res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.INTERNAL_SERVER_ERROR));
     }
   }
 }
