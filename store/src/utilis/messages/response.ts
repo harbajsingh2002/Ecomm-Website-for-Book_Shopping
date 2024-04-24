@@ -1,29 +1,22 @@
-export const successAction = (
-  statusCode: number,
-  data: {},
-  message = "Success"
-) => {
+export const successAction = (statusCode: number, data: {}, message = 'Success') => {
   return { statusCode, data, message };
 };
 
-export const failAction = (
-  statusCode: number,
-  errorMessage: string,
-  message = "Fail"
-) => {
+export const failAction = (statusCode: number, errorMessage: string, message = 'Fail') => {
   return { statusCode, errorMessage, message };
 };
 
 export const MESSAGE = {
-  SOMETHING_WENT_WRONG: "Something went wrong",
-  TOKEN_REQUIRED: "Auth token is requried.",
-  TOKEN_EXPIRED: "Session expired, please login again.",
-  LOGIN: "Login successfully",
-  USER_NOT_FOUND: "user not found",
+  SOMETHING_WENT_WRONG: 'Something went wrong',
+  TOKEN_REQUIRED: 'Auth token is requried.',
+  TOKEN_EXPIRED: 'Session expired, please login again.',
+  LOGIN: 'Login successfully',
+  USER_NOT_FOUND: 'user not found',
+  INTERNET_SERVER_ERROR: 'Internet server error',
 
-  VALIDATION_ERROR: "Validation error. Please check your params and try again.",
+  VALIDATION_ERROR: 'Validation error. Please check your params and try again.',
 
-  Invalidlogin: "Invalid login credentials. Please check and try again.",
+  Invalidlogin: 'Invalid login credentials. Please check and try again.',
   add: (labal: string) => {
     return `${labal} added successfully.`;
   },
@@ -46,7 +39,7 @@ export const MESSAGE = {
 
 export const STATUS_CODE = {
   SUCCESS: 200,
-  NOT_CREATED:404,
+  NOT_CREATED: 404,
   BAD_REQUEST: 400,
   SERVER_ERROR: 501,
   FORBIDDEN: 203,

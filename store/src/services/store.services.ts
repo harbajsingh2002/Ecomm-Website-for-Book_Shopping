@@ -4,7 +4,6 @@ import * as jwt from 'jsonwebtoken';
 import Store from '../model/store.model';
 import IStore from '../utilis/Istore/Istore';
 import valStore from '../validation/store.validation';
-import { error } from 'console';
 export class StoreServices {
   public static async createNewStore(body: IStore) {
     try {
@@ -39,45 +38,44 @@ export class StoreServices {
         description: body.description,
       });
       return newStore.save();
-      // return newStore
     } catch (error) {
       throw new Error();
     }
   }
 
-  //Login Store
-  public static async login(email: string, password: string) {
-    try {
-      if (!email || !password) {
-        throw new Error('Store name, email, and password are required');
-      }
+  // //Login Store
+  // public static async login(email: string, password: string) {
+  //   try {
+  //     if (!email || !password) {
+  //       throw new Error('Store name, email, and password are required');
+  //     }
 
-      // Find the store based on the provided email
-      const store = await Store.findOne({ email });
-      if (!store) {
-        throw new Error('Store not found');
-      }
-      if (store) {
-        const isPasswordValid = await bcrypt.compare(password, store.password);
-        if (!isPasswordValid) {
-          throw new Error('Incorrect password');
-        } else {
-          // if password is valid den generate JWT token
-          const token = jwt.sign({ storeId: store._id, email }, process.env.Token_Key!, { expiresIn: '30min' });
-          return { _id: store._id, email: store.email, token: token };
-        }
-      } else if (store) {
-        return 'invalidStore';
-      } else {
-        return 'notExist';
-      }
-    } catch (error) {
-      // Handle errors
-      throw new Error('Login failed');
-    }
-  }
+  //     // Find the store based on the provided email
+  //     const store = await this.getByAttribute({ email });
+  //     if (!store) {
+  //       throw new Error('Store not found');
+  //     }
+  //     if (store) {
+  //       const isPasswordValid = await bcrypt.compare(password, store.password);
+  //       if (!isPasswordValid) {
+  //         throw new Error('Incorrect password');
+  //       } else {
+  //         // if password is valid den generate JWT token
+  //         const token = jwt.sign({ storeId: store._id, email }, process.env.Token_Key!, { expiresIn: '30min' });
+  //         return { _id: store._id, email: store.email, token: token };
+  //       }
+  //     } else if (store) {
+  //       return 'invalidStore';
+  //     } else {
+  //       return 'notExist';
+  //     }
+  //   } catch (error) {
+  //     // Handle errors
+  //     throw new Error('Login failed');
+  //   }
+  // }
 
-  // Get Store by id
+  // Get Store by Id
   public static async getStoreById(_id: string) {
     try {
       const findStore = await this.getByAttribute({ _id });
