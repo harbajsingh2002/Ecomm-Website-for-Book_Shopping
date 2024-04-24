@@ -1,29 +1,25 @@
-import express, { Response, Request } from 'express'
-import { productController } from '../controller/products.controller'
-import imageStorage from '../utilis/fileUpload/file.upload'
+import express, { Response, Request } from 'express';
+import { productController } from '../controller/products.controller';
+import imageStorage from '../utilis/fileUpload/file.upload';
 
-const router = express.Router()
+const router = express.Router();
 
-//ROute to add new Book
-router.post('/', productController.createNewProduct)
+//Route to add new Book
+router.post('/', productController.createNewProduct);
 
 //route to get all the books
-router.get('/', productController.getAllBooks)
+router.get('/', productController.getAllBooks);
 
 //Route to get book by Id
-router.get('/:id', productController.getBookById)
+router.get('/:id', productController.getBookById);
 
 //router to update the book
-router.put('/:id', productController.updateBook)
+router.put('/:id', productController.updateBook);
 
 //router to delete the book
-router.delete('/:id', productController.deleteBookById)
+router.delete('/:id', productController.deleteBookById);
 
 //router to upload image of product
-router.post(
-  '/singleImage',
-  imageStorage.single('image'),
-  productController.uploadImage,
-)
+router.post('/singleImage', imageStorage.single('image'), productController.uploadImage);
 
-export default router
+export default router;
