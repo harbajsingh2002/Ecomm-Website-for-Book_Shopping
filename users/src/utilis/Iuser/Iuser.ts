@@ -10,6 +10,8 @@ export default interface IUser extends Document {
   role: string;
   isActive: boolean; // lowercase 'boolean'
   isDeleted: boolean; // lowercase 'boolean'
+  token: string;
+  createdAt: Date;
   timeStamp: number;
 }
 

@@ -55,7 +55,15 @@ export const userSchema = new Schema<IUser>({
     type: Boolean,
     default: false,
   },
-
+  token: {
+    type: String,
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+    expires: 3600, // this is the expiry time in seconds
+  },
   timeStamp,
 });
 
