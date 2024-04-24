@@ -1,10 +1,10 @@
-import stores from '../model/store.model'
-import bcrypt from 'bcrypt'
-import * as jwt from 'jsonwebtoken'
-import Store from '../model/store.model'
-import IStore from '../utilis/Istore/Istore'
-import valStore from '../validation/store.validation'
-import { error } from 'console'
+import stores from '../model/store.model';
+import bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
+import Store from '../model/store.model';
+import IStore from '../utilis/Istore/Istore';
+import valStore from '../validation/store.validation';
+import { error } from 'console';
 export class StoreServices {
   public static async createNewStore(body: IStore) {
     try {
@@ -14,34 +14,34 @@ export class StoreServices {
       //         error: error.details.map((err:any) => err.message.replace(/"/g, ''))
       //     });
       // }
-      const { storeName, email, password, contact, address, description } = body
+      const { storeName, email, password, contact, address, description } = body;
 
       // Input validation
       if (!storeName || !email || !password) {
-        throw new Error('Store name, email, and password are required')
+        throw new Error('Store name, email, and password are required');
       }
       const checkStore = await Store.findOne({
         $and: [{ email: body.email }, { isDeleted: false }],
-      })
+      });
       if (checkStore) {
         //return error
-        throw new Error('Email already existed')
+        throw new Error('Email already existed');
       }
 
-      const hashedPassword = await bcrypt.hash(body.password, 10)
+      const hashedPassword = await bcrypt.hash(body.password, 10);
 
-      const newStore = await stores.create({
+      const newStore = await Store.create({
         storeName: body.storeName,
         email: body.email,
         password: hashedPassword,
         contact: body.contact,
         address: body.address,
         description: body.description,
-      })
-      return newStore.save()
+      });
+      return newStore.save();
       // return newStore
     } catch (error) {
-      throw new Error()
+      throw new Error();
     }
   }
 
@@ -49,49 +49,45 @@ export class StoreServices {
   public static async login(email: string, password: string) {
     try {
       if (!email || !password) {
-        throw new Error('Store name, email, and password are required')
+        throw new Error('Store name, email, and password are required');
       }
 
       // Find the store based on the provided email
-      const store = await stores.findOne({ email })
+      const store = await Store.findOne({ email });
       if (!store) {
-        throw new Error('Store not found')
+        throw new Error('Store not found');
       }
       if (store) {
-        const isPasswordValid = await bcrypt.compare(password, store.password)
+        const isPasswordValid = await bcrypt.compare(password, store.password);
         if (!isPasswordValid) {
-          throw new Error('Incorrect password')
+          throw new Error('Incorrect password');
         } else {
           // if password is valid den generate JWT token
-          const token = jwt.sign(
-            { storeId: store._id, email },
-            process.env.Token_Key!,
-            { expiresIn: '30min' },
-          )
-          return { _id: store._id, email: store.email, token: token }
+          const token = jwt.sign({ storeId: store._id, email }, process.env.Token_Key!, { expiresIn: '30min' });
+          return { _id: store._id, email: store.email, token: token };
         }
       } else if (store) {
-        return 'invalidStore'
+        return 'invalidStore';
       } else {
-        return 'notExist'
+        return 'notExist';
       }
     } catch (error) {
       // Handle errors
-      throw new Error('Login failed')
+      throw new Error('Login failed');
     }
   }
 
   // Get Store by id
   public static async getStoreById(_id: string) {
     try {
-      const findStore = await this.getByAttribute({ _id })
+      const findStore = await this.getByAttribute({ _id });
 
       if (!findStore) {
-        throw new Error('Store not found')
+        throw new Error('Store not found');
       }
-      return findStore
+      return findStore;
     } catch (err: any) {
-      throw new Error(err.message)
+      throw new Error(err.message);
     }
   }
 
@@ -122,58 +118,54 @@ export class StoreServices {
 
   public static async getAllStore() {
     try {
-      const storeListing = await Store.find()
-      console.log(storeListing)
+      const storeListing = await Store.find();
+      console.log(storeListing);
 
-      return storeListing
+      return storeListing;
     } catch (err: any) {
-      throw new Error(err.message)
+      throw new Error(err.message);
     }
   }
 
   //Update Store
   public static async updateStore(_id: string, reqData: any) {
     try {
-      const updatedStore = await Store.findByIdAndUpdate(
-        _id,
-        { ...reqData },
-        { new: true, useFindAndModify: true },
-      )
-      return updatedStore
+      const updatedStore = await Store.findByIdAndUpdate(_id, { ...reqData }, { new: true, useFindAndModify: true });
+      return updatedStore;
     } catch (err: any) {
-      throw new Error(err.message)
+      throw new Error(err.message);
     }
   }
 
   //Soft Delete Store
   public static async deleteStore(reqData: any) {
     try {
-      const storeId = reqData.params.id
-      const store = await Store.findById(storeId)
+      const storeId = reqData.params.id;
+      const store = await Store.findById(storeId);
       //console.log(storeId)
       // const store = await Store.findOne({ where: { id: storeId.id } });
       if (!store) {
-        return 'notExist'
+        return 'notExist';
       } else {
-        const date = new Date()
+        const date = new Date();
         const existingStore = await Store.findByIdAndUpdate(storeId, {
           isDeleted: true,
           isActive: false,
           deletedAt: date,
-        })
-        return existingStore
+        });
+        return existingStore;
       }
     } catch (err: any) {
-      throw new Error(err.message)
+      throw new Error(err.message);
     }
   }
 
   public static async getByAttribute(attributes: object) {
     try {
-      const findStore = await Store.findOne(attributes).lean()
-      return findStore
+      const findStore = await Store.findOne(attributes).lean();
+      return findStore;
     } catch (err: any) {
-      throw new Error(err.message)
+      throw new Error(err.message);
     }
   }
 }

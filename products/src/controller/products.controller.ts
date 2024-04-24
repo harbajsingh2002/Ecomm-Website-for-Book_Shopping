@@ -56,13 +56,13 @@ export class productController {
       const findStore = await BooksServices.getBookById(bookId);
 
       if (!findStore) {
-        res.status(404).json(failAction(STATUS_CODE.SUCCESS, MESSAGE.notExist('Book not existed')));
+        res.status(404).json(failAction(STATUS_CODE.SUCCESS, MESSAGE.notExist('Book')));
       }
       const data = await BooksServices.updateBook(bookId, req.body);
 
       //const data = await StoreServices.updateStore({id:req.params});
       if (data) {
-        res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, data, MESSAGE.update('Book updated successfully')));
+        res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, data, MESSAGE.update('Book')));
       }
     } catch (err: any) {
       console.log('err', err.MESSAGE);
