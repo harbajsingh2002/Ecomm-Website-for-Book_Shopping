@@ -1,8 +1,10 @@
 import mongoose, { Schema, model } from 'mongoose';
-import timeStamp from '../utilis/moment/moment';
-import { Role } from '../utilis/role/role';
-import IUser from '../utilis/Iuser/Iuser';
+import timeStamp from '../utils/moment/moment';
+import { Role } from '../utils/role/role';
+import IUser from '../utils/Iuser/Iuser';
 import { nanoid } from 'nanoid';
+import crypto from 'crypto';
+import { Request, Response } from 'express'; // Import Request and Response types
 
 export const userSchema = new Schema<IUser>({
   _id: {
@@ -30,9 +32,8 @@ export const userSchema = new Schema<IUser>({
   password: {
     type: String,
     required: true,
-    select: true, // password doest return in the response
+    select: true, // password does not return in the response
   },
-
   contact: {
     type: Number,
     required: false,
@@ -55,9 +56,13 @@ export const userSchema = new Schema<IUser>({
     type: Boolean,
     default: false,
   },
-  token: {
-    type: String,
+  resetPasswordToken: {
+    type: String || undefined,
     required: true,
+  },
+  resetPasswordExpire: {
+    type: Date,
+    default: null,
   },
   createdAt: {
     type: Date,
@@ -66,6 +71,28 @@ export const userSchema = new Schema<IUser>({
   },
   timeStamp,
 });
+
+userSchema.methods.resetPassword = async function () {
+  try {
+    // Generate a plain token
+    const resetToken = crypto.randomBytes(32).toString('hex');
+
+    // Hash the token(encrypted token)
+    this.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+    // Set the expiration date for the token (e.g., 10 minutes from now)
+    this.resetPasswordExpire = Date.now() + 10 * 60 * 1000; // Token valid for 10 minutes
+
+    console.log(resetToken, this.resetPasswordToken);
+
+    await this.save();
+
+    // Return the plain reset token
+    return resetToken;
+  } catch (error) {
+    throw new Error('Error generating reset token');
+  }
+};
 
 const User = mongoose.model<IUser>('User', userSchema);
 export default User;
