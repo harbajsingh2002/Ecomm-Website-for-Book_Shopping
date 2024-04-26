@@ -62,27 +62,28 @@ export class authcontroller {
     }
 
     const token = crypto.createHash('sha256').update(req.params.resetToken).digest('hex');
-    console.log('Hashed reset token:', token);
+    console.log('Reset token:', token);
 
     const user = await User.findOne({ passwordResetToken: token, resetPasswordExpire: { $gt: Date.now() } });
 
-    if (!user) {
-      res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, MESSAGE.INVALID_TOKEN));
-      // next(error);
+    //const user = await User.findOne({
+    // email:req.body.email
+    // });
 
-      //Reseting the user password
-      const user = new User();
-
+    //Reseting the user password
+    if (user) {
+      // const user = new User();
       user.password = req.body.password;
       user.confirmPassword = req.body.confirmpassword;
       user.resetPasswordToken = undefined;
       user.resetPasswordExpire = undefined;
       user.passwordChangedAt = Date.now();
       await user.save();
-
       //Login the user
       // const loginToken = await UserServices.login signToken(user._id);
       // const loginToken = await UserServices.login.jwt.signToken({ userId: user._id })
+      res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, MESSAGE.INVALID_TOKEN));
+      // next(error);
       const loginToken = jwt.sign({ userId: user._id }, process.env.TOKEN_KEY!, { expiresIn: '30min' });
 
       res.status(STATUS_CODE.SUCCESS).json(failAction(STATUS_CODE.SUCCESS, loginToken, MESSAGE.update('reset password')));

@@ -11,43 +11,43 @@ export const userSchema = new Schema<IUser>({
     type: String,
     default: () => nanoid(),
   },
-  // name: {
-  //   firstName: {
-  //     type: String,
-  //     required: true,
-  //   },
-  //   lastName: {
-  //     type: String,
-  //   },
-  // },
-  // age: {
-  //   type: Number,
-  //   required: true,
-  // },
-  // email: {
-  //   type: String,
-  //   required: true,
-  //   unique: true,
-  // },
+  name: {
+    firstName: {
+      type: String,
+      required: true,
+    },
+    lastName: {
+      type: String,
+    },
+  },
+  age: {
+    type: Number,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   password: {
     type: String,
     required: true,
     select: true, // password does not return in the response
   },
-  // contact: {
-  //   type: Number,
-  //   required: false,
-  //   unique: true,
-  // },
-  // address: {
-  //   type: String,
-  //   required: false,
-  // },
-  // role: {
-  //   type: String,
-  //   enum: Role,
-  //   default: Role.User,
-  // },
+  contact: {
+    type: Number,
+    required: false,
+    unique: true,
+  },
+  address: {
+    type: String,
+    required: false,
+  },
+  role: {
+    type: String,
+    enum: Role,
+    default: Role.User,
+  },
   isActive: {
     type: Boolean,
     default: true,
@@ -61,7 +61,7 @@ export const userSchema = new Schema<IUser>({
     required: false,
   },
   resetPasswordExpire: {
-    type: Date,
+    type: Date || undefined,
     default: null,
   },
   confirmPassword: {
