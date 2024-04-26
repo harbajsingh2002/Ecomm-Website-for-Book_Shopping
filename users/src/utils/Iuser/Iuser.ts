@@ -14,8 +14,10 @@ export default interface IUser extends Document {
   role: string;
   isActive: boolean;
   isDeleted: boolean;
-  resetPasswordToken: string | null;
-  resetPasswordExpire: Date | null;
+  resetPasswordToken: string | undefined;
+  resetPasswordExpire: Date | undefined;
+  confirmPassword: string;
+  passwordChangedAt: number;
   createdAt: Date;
   timeStamp: number;
   resetPassword(): string;

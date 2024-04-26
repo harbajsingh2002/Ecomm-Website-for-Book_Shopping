@@ -11,43 +11,43 @@ export const userSchema = new Schema<IUser>({
     type: String,
     default: () => nanoid(),
   },
-  name: {
-    firstName: {
-      type: String,
-      required: true,
-    },
-    lastName: {
-      type: String,
-    },
-  },
-  age: {
-    type: Number,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
+  // name: {
+  //   firstName: {
+  //     type: String,
+  //     required: true,
+  //   },
+  //   lastName: {
+  //     type: String,
+  //   },
+  // },
+  // age: {
+  //   type: Number,
+  //   required: true,
+  // },
+  // email: {
+  //   type: String,
+  //   required: true,
+  //   unique: true,
+  // },
   password: {
     type: String,
     required: true,
     select: true, // password does not return in the response
   },
-  contact: {
-    type: Number,
-    required: false,
-    unique: true,
-  },
-  address: {
-    type: String,
-    required: false,
-  },
-  role: {
-    type: String,
-    enum: Role,
-    default: Role.User,
-  },
+  // contact: {
+  //   type: Number,
+  //   required: false,
+  //   unique: true,
+  // },
+  // address: {
+  //   type: String,
+  //   required: false,
+  // },
+  // role: {
+  //   type: String,
+  //   enum: Role,
+  //   default: Role.User,
+  // },
   isActive: {
     type: Boolean,
     default: true,
@@ -58,11 +58,18 @@ export const userSchema = new Schema<IUser>({
   },
   resetPasswordToken: {
     type: String || undefined,
-    required: true,
+    required: false,
   },
   resetPasswordExpire: {
     type: Date,
     default: null,
+  },
+  confirmPassword: {
+    type: String,
+  },
+  passwordChangedAt: {
+    type: Number,
+    default: Date.now,
   },
   createdAt: {
     type: Date,

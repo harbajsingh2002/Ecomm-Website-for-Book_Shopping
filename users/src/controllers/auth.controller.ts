@@ -3,8 +3,9 @@ import { Request, Response } from 'express';
 import { emailSender } from '../utils/send.email/send.email';
 import { MESSAGE, STATUS_CODE, failAction, successAction } from '../utils/messages/response';
 import { error } from 'console';
-import { string } from 'joi';
-
+import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
+import { UserServices } from '../services/user.services';
 export class authcontroller {
   public static async forgetPassword(req: Request, res: Response, next: any) {
     try {
@@ -43,11 +44,48 @@ export class authcontroller {
       console.error(err);
       const user = new User();
 
-      user.resetPasswordToken = null;
-      user.resetPasswordExpire = null;
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
       await user.save({ validateBeforeSave: false });
 
       res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, MESSAGE.INTERNAL_SERVER_ERROR));
+    }
+  }
+
+  //Reset Password
+  public static async resetPassword(req: Request, res: Response, Token: any) {
+    //Checking that user existeing or not
+    console.log('Reset token:', req.params.resetToken);
+
+    if (!req.params.resetToken) {
+      return res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, MESSAGE.INVALID_TOKEN));
+    }
+
+    const token = crypto.createHash('sha256').update(req.params.resetToken).digest('hex');
+    console.log('Hashed reset token:', token);
+
+    const user = await User.findOne({ passwordResetToken: token, resetPasswordExpire: { $gt: Date.now() } });
+
+    if (!user) {
+      res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, MESSAGE.INVALID_TOKEN));
+      // next(error);
+
+      //Reseting the user password
+      const user = new User();
+
+      user.password = req.body.password;
+      user.confirmPassword = req.body.confirmpassword;
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
+      user.passwordChangedAt = Date.now();
+      await user.save();
+
+      //Login the user
+      // const loginToken = await UserServices.login signToken(user._id);
+      // const loginToken = await UserServices.login.jwt.signToken({ userId: user._id })
+      const loginToken = jwt.sign({ userId: user._id }, process.env.TOKEN_KEY!, { expiresIn: '30min' });
+
+      res.status(STATUS_CODE.SUCCESS).json(failAction(STATUS_CODE.SUCCESS, loginToken, MESSAGE.update('reset password')));
     }
   }
 }
