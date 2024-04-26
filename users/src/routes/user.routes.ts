@@ -1,7 +1,7 @@
 import express, { Response, Request } from 'express';
-//import Store from "../model/store.model";
 import { userController } from '../controllers/user.controller';
-import auth from '../utilis/auth/user.middleware';
+import { authcontroller } from '../controllers/auth.controller';
+import auth from '../utils/auth/user.middleware';
 const router = express.Router();
 
 // router.post("/", async (req: Request, res: Response) => {
@@ -20,16 +20,23 @@ router.post('/create', userController.createNewUser);
 //Login User
 router.post('/login', userController.login);
 
-//find all User
+//Find all User
 router.get('/', auth, userController.findAllUser);
 
-// find a specific user
+//Find a specific user
 router.get('/:id', userController.findUserById);
 
-// update a specific user
+//Update a specific user
 router.put('/:id', auth, userController.updateUser);
 
-// deletes a specific user
+//Deletes a specific user
 router.delete('/:id', auth, userController.deleteUser);
+
+//ForgetPassword
+router.post('/forgotPassword', authcontroller.forgetPassword);
+// router.route('/forgetPassword').post(authcontroller.forgetPassword);
+
+//ResetPassword
+router.patch('/resetPassword/:resetToken', authcontroller.resetPassword);
 
 export default router;

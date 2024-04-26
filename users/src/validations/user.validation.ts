@@ -11,7 +11,7 @@ const Listing = joi.object({
 
 const User = joi.object({
   name: joi.string().min(5).max(20).optional().messages({ 'any.required': 'Name is a required' }),
-  age: joi.string().required(),
+  age: joi.string().required().min(0).max(100),
   email: joi.string().email().required(),
   password: joi.string().min(6).optional(),
   address: joi.string().max(30).optional(),

@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
 //import { valStore, loginStore } from "../validation/store.validation";
-import { failAction, MESSAGE, STATUS_CODE, successAction } from '../utilis/messages/response';
+import { failAction, MESSAGE, STATUS_CODE, successAction } from '../utils/messages/response';
 import { UserServices } from '../services/user.services';
-import IUser from '../utilis/Iuser/Iuser';
+import IUser from '../utils/Iuser/Iuser';
+import User from '../models/user.model';
 
 export class userController {
   //Cfreate User

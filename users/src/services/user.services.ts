@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import User from '../models/user.model';
-import IUser from '../utilis/Iuser/Iuser';
-import IUserLogin from '../utilis/Iuser/Iuser';
+import IUser from '../utils/Iuser/Iuser';
+import IUserLogin from '../utils/Iuser/Iuser';
 
 export class UserServices {
   //Create New User
@@ -14,7 +14,7 @@ export class UserServices {
       const existingUser = await User.findOne({ email, isDeleted: false });
 
       if (existingUser) {
-        throw new Error('Email already exists');
+        return { success: false, message: 'Email already exists' };
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -140,4 +140,11 @@ export class UserServices {
       throw new Error(err.message);
     }
   }
+  // public static async forgetPassword(reqData: any) {
+  //   try {
+  //     const { email } = req.body;
+  //   } catch (err: any) {
+  //     throw new Error(err.message);
+  //   }
+  // }
 }
