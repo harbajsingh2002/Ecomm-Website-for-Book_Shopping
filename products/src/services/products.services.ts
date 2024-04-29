@@ -5,7 +5,7 @@ import path from 'path';
 export class BooksServices {
   public static async addNewBook(body: IBooks) {
     try {
-      const { title, author, description, category, price } = body;
+      const { title } = body;
 
       // Input validation
       if (!title) {

@@ -4,6 +4,8 @@ import connectDB from './src/config/db.config';
 import userRouter from './src/routes/user.routes';
 import helmet from 'helmet';
 import cors from 'cors';
+import redisClient from './src/config/redis.client';
+import ioRedisClient from './src/config/ioRedis.client';
 
 //configuring dotenv to load environment variables from a .env
 dotenv.config();
@@ -41,3 +43,7 @@ app.listen(port, () => {
 
 // Database connection
 connectDB();
+
+//Redis connection
+redisClient;
+ioRedisClient;
