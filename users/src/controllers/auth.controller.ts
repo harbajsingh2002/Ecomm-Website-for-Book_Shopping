@@ -67,7 +67,7 @@ export class authcontroller {
     const user = await User.findOne({ passwordResetToken: token, resetPasswordExpire: { $gt: Date.now() } });
 
     //const user = await User.findOne({
-    // email:req.body.email
+    // email:req.body.emailcd
     // });
 
     //Reseting the user password

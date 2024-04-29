@@ -1,0 +1,26 @@
+import redis, { Redis } from 'ioredis';
+// import dotenv, { config } from 'dotenv';
+// import { createClient } from 'redis';
+// dotenv.config();
+
+// const REDIS_PORT = process.env.REDIS_PORT;
+// const REDIS_HOST = process.env.REDIS_PORT;
+// const REDIS_PASSWORD = process.env.REDIS_PASSWORD;
+
+const ioRedisClient = new redis({
+  //   port: REDIS_PORT,
+  //   host: "REDIS_HOST",
+  //   password: "REDIS_PASSWORD",
+  port: 6379,
+  host: 'localhost',
+  password: '',
+});
+
+// ioRedisClient.connect();
+ioRedisClient.on('connect', () => {
+  console.log('Connected to ioredis successfully!!');
+});
+ioRedisClient.on('error', (error: any) => {
+  console.log('Redis connection error:', error);
+});
+export default ioRedisClient;
