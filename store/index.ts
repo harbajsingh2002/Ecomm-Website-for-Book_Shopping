@@ -3,16 +3,29 @@ import dotenv, { config } from 'dotenv';
 import connectDB from './src/config/db.config';
 import storeRouter from './src/routes/store.routes';
 import helmet from 'helmet';
+import cors from 'cors';
 import ioRedisClient from './src/config/ioRedis.client';
 import redisClient from './src/config/redis.client';
+import Redis from 'ioredis';
+// import NRP from 'node-redis-pubsub';
 
 dotenv.config();
-const app = express();
-app.use(helmet());
 
-const port = process.env.PORT || 3000;
+const app = express();
+app.use(express.json());
+
+app.use(helmet());
+app.use(cors());
+
+const port = process.env.PORT || 3002;
 
 app.use(express.json());
+
+//
+// const nrp = new NRP.NodeRedisPubSub({
+//   PORT: 6379,
+//   scope: 'microservice',
+// });
 
 // API Routes
 app.use('/api/store', storeRouter);
@@ -22,16 +35,20 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
+  console.log(`[server]: Store is running at port: ${port}`);
 });
 // Database connection
 connectDB();
 
-//Timestamp
-// import  moment  from 'moment'
-// console.log(moment());
-//console.log(process.env.PORT);
-//console.log(process.env.MONGODB_URI);
+//Publisher
+function publisherMessage(channel: string, message: any) {
+  // Publish the message to the specified channel
+  redisClient.publish(channel, JSON.stringify(message));
+  console.log('Message published to channel:', channel);
+}
+
+// Call the publisherMessage function with the desired channel and message
+publisherMessage('storeChannel', { key: 'value' });
 
 //Redis connection
 redisClient;

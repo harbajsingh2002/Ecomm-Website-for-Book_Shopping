@@ -1,7 +1,9 @@
+import Redis from 'ioredis';
 import Books from '../model/products.model';
 import IBooks from '../utilis/interface/IBooks';
 import path from 'path';
-
+import redis from '../config/redis.client';
+import redisClient from '../config/redis.client';
 export class BooksServices {
   public static async addNewBook(body: IBooks) {
     try {
@@ -126,5 +128,28 @@ export class BooksServices {
         console.error('An error occurred:', err);
       }
     }
+  }
+
+  // Function to subscribe to publishe messages
+  public static async subscribeToMessages() {
+    const redisSubscriber = new Redis();
+
+    redisSubscriber.on('message', function (channel, message) {
+      console.log(`Received message from channel ${channel}: ${message}`);
+
+      try {
+        const parsedMessage = JSON.parse(message);
+
+        console.log('Processing the message...');
+        console.log('Parsed message:', parsedMessage);
+
+        if (parsedMessage.type === 'request') {
+          console.log('Responding to the request...');
+          // Add your response logic here
+        }
+      } catch (error) {
+        console.error('Error handling message:', error);
+      }
+    });
   }
 }

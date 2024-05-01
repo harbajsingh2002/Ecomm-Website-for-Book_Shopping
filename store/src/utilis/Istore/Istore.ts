@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import { Document } from 'mongoose';
 
 export default interface IStore extends Document {
   storeName: string;
@@ -9,5 +9,6 @@ export default interface IStore extends Document {
   description?: string;
   isActive: boolean; // lowercase 'boolean'
   isDeleted: boolean; // lowercase 'boolean'
+  // message?: string;
   timeStamp: number;
 }

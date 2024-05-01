@@ -18,7 +18,7 @@ const ioRedisClient = new redis({
 
 // ioRedisClient.connect();
 ioRedisClient.on('connect', () => {
-  console.log('onnected to ioredis successfully!!');
+  console.log('Connected to ioredis successfully!!');
 });
 ioRedisClient.on('error', (error: any) => {
   console.log('Redis connection error:', error);

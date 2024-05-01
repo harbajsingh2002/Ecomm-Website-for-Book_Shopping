@@ -1,7 +1,8 @@
-import mongoose, { ConnectOptions } from 'mongoose'
-import dotenv from 'dotenv'
+import mongoose, { ConnectOptions } from 'mongoose';
+import dotenv from 'dotenv';
 
-dotenv.config()
+dotenv.config();
+
 async function connectDB() {
   try {
     const conn = await mongoose.connect(
@@ -11,12 +12,12 @@ async function connectDB() {
       //   useNewUrlParser: false,
       //   useUnifiedTopology: false,
       // } as ConnectOptions
-    )
-    console.log(`MongoDB Connected Successfully: ${conn.connection.host}`)
+    );
+    console.log(`MongoDB Connected Successfully: ${conn.connection.host}`);
   } catch (error) {
-    console.error(error, 'Not Connected')
-    return error
+    console.error(error, 'Not Connected');
+    return error;
   }
 }
 
-export default connectDB
+export default connectDB;

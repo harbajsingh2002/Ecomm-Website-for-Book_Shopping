@@ -4,6 +4,7 @@ import { failAction, MESSAGE, STATUS_CODE, successAction } from '../utilis/messa
 import { StoreServices } from '../services/store.services';
 import bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
+import redisClient from '../config/redis.client';
 export class StoreController {
   public static async createNewStore(req: Request, res: Response) {
     try {
@@ -131,6 +132,26 @@ export class StoreController {
     } catch (err: any) {
       //logger.error(MESSAGE.errorLog('userDelete', 'userController', err))
       res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.INTERNET_SERVER_ERROR));
+    }
+  }
+
+  //Publisher mesage
+  public static async publishMessage(req: Request, res: Response, message: any) {
+    try {
+      console.log('controller');
+      const requestBody = req.body;
+      const messageObject = {
+        message: requestBody,
+        date: new Intl.DateTimeFormat('es-ES').format(new Date()),
+      };
+
+      redisClient.publish('Store is coming with new books', JSON.stringify(messageObject));
+
+      console.log(`Publishing an Event using Redis to: ${JSON.stringify(requestBody)}`);
+      res.json({ detail: 'Publishing an Event using Redis successful' });
+    } catch (err) {
+      console.error(err); // Log the error for debugging
+      res.status(400).json({ error: 'Something went wrong' }); // Send an error response
     }
   }
 }

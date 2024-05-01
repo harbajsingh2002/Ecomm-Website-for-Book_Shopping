@@ -36,3 +36,52 @@ Start the server by running npm start in the root directory
 
 Manual Testing:
 Postman was used for manual testing in this application.
+
+##********************Project Architecture*********************##
+project-root/
+│
+├── user-service/
+│   ├── src/
+│   │   ├── models/
+│   │   │   └── user.ts
+│   │   ├── utils/
+│   │   │   ├── pubsub.ts       
+│   │   │   ├── authentication.ts
+│   │   │   ├── database.ts
+│   │   │   └── ...
+│   │   └── index.ts              
+│   ├── node_modules/
+│   ├── package.json
+│   ├── tsconfig.json
+│   └── ...
+│
+├── store-service/
+│   ├── src/
+│   │   ├── models/
+│   │   │   └── store.ts
+│   │   ├── utils/
+│   │   │   ├── store.pubsub.ts       
+│   │   │   ├── authentication.ts
+│   │   │   ├── database.ts
+│   │   │   └── ...
+│   │   └── index.ts              
+│   ├── node_modules/
+│   ├── package.json
+│   ├── tsconfig.json
+│   └── ...
+│
+|── products-service/
+│   ├── src/
+│   │   ├── models/
+│   │   │   └── products.ts
+│   │   ├── utils/
+│   │   │   ├── user.pubsub.ts       
+│   │   │   ├── pubsub.ts
+│   │   │   ├── 
+│   │   │   └── 
+│   │   └── index.ts             
+│   ├── node_modules/
+│   ├── package.json
+│   ├── tsconfig.json
+│   └── ...
+

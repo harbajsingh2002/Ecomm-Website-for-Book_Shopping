@@ -4,6 +4,7 @@ import * as jwt from 'jsonwebtoken';
 import Store from '../model/store.model';
 import IStore from '../utilis/Istore/Istore';
 import valStore from '../validation/store.validation';
+import redisClient from '../config/redis.client';
 export class StoreServices {
   public static async createNewStore(body: IStore) {
     try {
@@ -163,6 +164,26 @@ export class StoreServices {
       const findStore = await Store.findOne(attributes).lean();
       return findStore;
     } catch (err: any) {
+      throw new Error(err.message);
+    }
+  }
+
+  //Publish Message
+  public static async publishMessage(req: Request, res: Response, message: any) {
+    try {
+      console.log('Inside service');
+      const requestBody = req.body;
+      const messageObject = {
+        message: requestBody,
+        date: new Intl.DateTimeFormat('es-ES').format(new Date()),
+      };
+
+      redisClient.publish('Store is coming with new books', JSON.stringify(messageObject));
+
+      console.log(`Publishing an Event using Redis to: ${JSON.stringify(requestBody)}`);
+      return requestBody;
+    } catch (err: any) {
+      console.error(err);
       throw new Error(err.message);
     }
   }

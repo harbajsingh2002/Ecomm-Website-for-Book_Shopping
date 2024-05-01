@@ -21,7 +21,7 @@ app.use(helmet());
 app.use(cors());
 
 // Setting Port
-const port = process.env.PORT || 3002;
+const port = process.env.PORT || 3001;
 
 //Parsing Request Body:
 app.use(express.json());
@@ -38,7 +38,7 @@ app.get('/', (req: Request, res: Response) => {
 
 //Starting the Server:The Express server to listen on the specified port.
 app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
+  console.log(`[server]: Users is running at port: ${port}`);
 });
 
 // Database connection

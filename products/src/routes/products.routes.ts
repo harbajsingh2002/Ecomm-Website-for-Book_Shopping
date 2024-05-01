@@ -22,4 +22,7 @@ router.delete('/:id', productController.deleteBookById);
 //router to upload image of product
 router.post('/singleImage', imageStorage.single('image'), productController.uploadImage);
 
+//route to subscribe to channel
+router.get('/subscribe', productController.subscribeMessage);
+
 export default router;

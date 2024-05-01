@@ -6,7 +6,9 @@ import helmet from 'helmet';
 import cors from 'cors';
 import ioRedisClient from './src/config/ioRedis.client';
 import redisClient from './src/config/redis.client';
-// import { v4 as uuidv4 } from 'uuid'
+import Redis from 'ioredis';
+const subsciber = new Redis();
+// import NRP from 'node-redis-pubsub';
 
 //configuring dotenv to load environment variables from a .env
 dotenv.config();
@@ -22,16 +24,17 @@ app.use(helmet());
 app.use(cors());
 
 // Setting Port
-const port = process.env.PORT || 3001;
-
-// const MONGODB_URI =
-//   process.env.MONGODB_URI ||
-//   'mongodb://localhost:27017/Ecomm_Book_Shopping_Product'
+const port = process.env.PORT || 3003;
 
 //Parsing Request Body:
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
+
+// const nrp = new NRP.NodeRedisPubSub({
+//   PORT: 6379,
+//   scope: 'microservice',
+// });
 
 // API Routes: define routes for handling product-
 app.use('/api/products', productRouter);
@@ -43,10 +46,37 @@ app.get('/', (req: Request, res: Response) => {
 
 //Starting the Server:The Express server to listen on the specified port.
 app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
+  console.log(`[server]: Product is running at: ${port}`);
 });
+
 // Database connection
 connectDB();
+
+//Subscriber
+// subsciber.subscribe('storeChannel');
+// subsciber.on('message', (channel, Message) => {
+//   console.log(`received the store data from${channel}:`, JSON.parse(Message));
+// });
+
+const redisSubscriber = new Redis();
+
+// Subscribe to the Redis channel
+const channelName = 'Store is coming with new books';
+redisSubscriber.subscribe(channelName);
+
+// Handle incoming messages
+redisSubscriber.on('message', function (channel, message) {
+  console.log(`Received message from channel ${channel}: ${message}`);
+});
+
+// Handle subscription events
+redisSubscriber.on('subscribe', function (channel, count) {
+  console.log(`Subscribed to channel ${channel}`);
+});
+
+redisSubscriber.on('error', function (err) {
+  console.error('Redis error:', err);
+});
 
 //Redis connection
 redisClient;

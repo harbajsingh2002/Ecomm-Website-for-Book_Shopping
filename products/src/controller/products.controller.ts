@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { MESSAGE, STATUS_CODE, failAction, successAction } from '../utilis/messages/response';
 import { BooksServices } from '../services/products.services';
+import Redis from 'ioredis';
 
 export class productController {
   public static async createNewProduct(req: Request, res: Response) {
@@ -84,13 +85,32 @@ export class productController {
 
   public static async uploadImage(req: Request, res: Response) {
     try {
-      console.log('hello');
+      // console.log('hello');
       const data = await BooksServices.uploadImage(req.body, req.file!.path);
       if (data) {
         res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, data, MESSAGE.upload('Image')));
       } else {
         res.status(STATUS_CODE.NOT_CREATED);
       }
+    } catch (err: any) {
+      // logger.error(message.errorLog('productAdd', 'productController', err))
+      res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.SOMETHING_WENT_WRONG));
+    }
+  }
+
+  public static async subscribeMessage(channelName: string, req: Request, res: Response) {
+    try {
+      const redisSubscriber = new Redis();
+      // Subscribe to the specified channel
+      redisSubscriber.subscribe(channelName, function (err, count) {
+        if (err) {
+          console.error('Error subscribing to channel:', err);
+          res.status(500).json({ error: 'Error subscribing to channel' });
+        } else {
+          console.log(`Subscribed to ${count} channel(s).`);
+          res.json({ detail: `Subscribed to ${count} channel(s).` });
+        }
+      });
     } catch (err: any) {
       // logger.error(message.errorLog('productAdd', 'productController', err))
       res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.SOMETHING_WENT_WRONG));
