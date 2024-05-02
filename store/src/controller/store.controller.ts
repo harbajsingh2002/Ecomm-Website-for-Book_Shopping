@@ -149,7 +149,7 @@ export class StoreController {
       };
       // const result = await StoreServices.publishMessage(requestBody, res, message);
 
-      redisClient.publish('Store is coming with new books', JSON.stringify(message));
+      redisClient.publish('storeChannel', JSON.stringify(message));
       console.log('publish result', message);
 
       //console.log(`Publishing an Event using Redis to: ${JSON.stringify(requestBody)}`);

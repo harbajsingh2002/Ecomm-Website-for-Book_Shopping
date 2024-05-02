@@ -67,7 +67,6 @@ BooksServices.subscribeToMessages(channelName)
   .catch((err) => {
     console.error(`Error subscribing to ${channelName} channel:`, err);
   });
-
 //Redis connection
 redisClient;
 ioRedisClient;

@@ -132,8 +132,8 @@ export class BooksServices {
 
   // Function to subscribe to publishe messages
   public static async subscribeToMessages(channelName: string) {
-    console.log('service');
     const redisSubscriber = new Redis();
+
     redisSubscriber.subscribe(channelName, (err, channelName) => {
       if (err) {
         console.error('Error subscribing to channel:', err);
@@ -141,8 +141,8 @@ export class BooksServices {
         console.log(`Subscribed to ${channelName} channel(s).`);
       }
     });
-    redisSubscriber.on('message', function (channelName, message) {
-      console.log(`Received message from channel ${channelName}: ${message}`);
+    redisSubscriber.on('message', (channel, message) => {
+      console.log(`Received message from channel ${channel}: ${message}`);
 
       try {
         const parsedMessage = JSON.parse(message);
@@ -153,8 +153,8 @@ export class BooksServices {
         if (parsedMessage.type === 'request') {
           console.log('Responding to the request...');
         }
-      } catch (error) {
-        console.error('Error handling message:', error);
+      } catch (err: any) {
+        throw new Error(err.message);
       }
     });
   }
