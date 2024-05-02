@@ -98,23 +98,47 @@ export class productController {
     }
   }
 
+  //Subscriber message
   public static async subscribeMessage(channelName: string, req: Request, res: Response) {
     try {
-      console.log('controller');
+      console.log('Controller');
+
       const redisSubscriber = new Redis();
+
       // Subscribe to the specified channel
-      redisSubscriber.subscribe(channelName, function (err, count) {
+      redisSubscriber.subscribe(channelName, (err, channelName) => {
         if (err) {
           console.error('Error subscribing to channel:', err);
           res.status(500).json({ error: 'Error subscribing to channel' });
         } else {
-          console.log(`Subscribed to ${count} channel(s).`);
-          res.json({ detail: `Subscribed to ${count} channel(s).` });
+          console.log(`Subscribed to ${channelName} channel(s).`);
+          res.json({ detail: `Subscribed to ${channelName} channel(s).` });
         }
       });
-    } catch (err: any) {
-      // logger.error(message.errorLog('productAdd', 'productController', err))
-      res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.SOMETHING_WENT_WRONG));
+
+      // incoming messages
+      redisSubscriber.on('message', (channelName, message) => {
+        try {
+          console.log(`Received message from channel ${channelName}: ${message}`);
+
+          const parsedMessage = JSON.parse(message);
+
+          console.log('Processing the message...');
+          console.log('Parsed message:', parsedMessage);
+
+          // Perform any actions based on the message
+        } catch (error) {
+          console.error('Error handling message:', error);
+        }
+      });
+
+      // Will handle the error message of Redis client
+      redisSubscriber.on('error', (err) => {
+        console.error('Redis error:', err);
+      });
+    } catch (err) {
+      console.error('Error:', err);
+      res.status(400).json({ error: 'Something went wrong' });
     }
   }
 }

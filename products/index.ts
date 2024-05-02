@@ -7,6 +7,7 @@ import cors from 'cors';
 import ioRedisClient from './src/config/ioRedis.client';
 import redisClient from './src/config/redis.client';
 import Redis from 'ioredis';
+import { BooksServices } from './src/services/products.services';
 const subsciber = new Redis();
 // import NRP from 'node-redis-pubsub';
 
@@ -58,25 +59,14 @@ connectDB();
 //   console.log(`received the store data from${channel}:`, JSON.parse(Message));
 // });
 
-const redisSubscriber = new Redis();
-
-// Subscribe to the Redis channel
-const channelName = 'Store is coming with new books';
-redisSubscriber.subscribe(channelName);
-
-// Handle incoming messages
-redisSubscriber.on('message', function (channel, message) {
-  console.log(`Received message from channel ${channel}: ${message}`);
-});
-
-// Handle subscription events
-redisSubscriber.on('subscribe', function (channel, count) {
-  console.log(`Subscribed to channel ${channel}`);
-});
-
-redisSubscriber.on('error', function (err) {
-  console.error('Redis error:', err);
-});
+const channelName = 'storeChannel';
+BooksServices.subscribeToMessages(channelName)
+  .then(() => {
+    console.log(`Subscribed to ${channelName} channel`);
+  })
+  .catch((err) => {
+    console.error(`Error subscribing to ${channelName} channel:`, err);
+  });
 
 //Redis connection
 redisClient;

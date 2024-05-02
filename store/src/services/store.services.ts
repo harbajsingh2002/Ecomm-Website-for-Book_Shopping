@@ -173,16 +173,16 @@ export class StoreServices {
     try {
       console.log('Inside service');
       const requestBody = req.body;
-      const message = {
-        message: requestBody,
-        date: new Intl.DateTimeFormat('es-ES').format(new Date()),
-      };
+      // const message = {
+      //   message: requestBody,
+      //   date: new Intl.DateTimeFormat('es-ES').format(new Date()),
+      // };
 
-      redisClient.publish('Store is coming with new books', JSON.stringify(message));
+      const result = redisClient.publish('Store is coming with new books', JSON.stringify(message));
 
       console.log(`Publishing an Event using Redis to: ${JSON.stringify(requestBody)}`);
 
-      return requestBody;
+      return result;
     } catch (err: any) {
       console.error(err);
       throw new Error(err.message);

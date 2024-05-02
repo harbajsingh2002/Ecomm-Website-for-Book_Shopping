@@ -5,6 +5,7 @@ import { StoreServices } from '../services/store.services';
 import bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import redisClient from '../config/redis.client';
+import { channel } from 'diagnostics_channel';
 export class StoreController {
   public static async createNewStore(req: Request, res: Response) {
     try {
@@ -91,7 +92,7 @@ export class StoreController {
   //Get All Store
   public static async getAllStore(req: Request, res: Response) {
     try {
-      console.log('gyfduhdjigf');
+      // console.log('gyfduhdjigf');
       const storeData = await StoreServices.getAllStore();
       res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, storeData, MESSAGE.fetch('Store')));
     } catch (err: any) {
@@ -138,20 +139,26 @@ export class StoreController {
   //Publisher mesage
   public static async publishMessage(req: Request, res: Response, message: any) {
     try {
-      console.log('controller');
       const requestBody = req.body;
-      const messageObject = {
+      console.log('requestBody', requestBody);
+
+      const message = {
         message: requestBody,
-        date: new Intl.DateTimeFormat('es-ES').format(new Date()),
+        channelName: 'storeChannel',
+        // date: new Intl.DateTimeFormat('es-ES').format(new Date()),
       };
+      // const result = await StoreServices.publishMessage(requestBody, res, message);
 
-      redisClient.publish('Store is coming with new books', JSON.stringify(messageObject));
+      redisClient.publish('Store is coming with new books', JSON.stringify(message));
+      console.log('publish result', message);
 
-      console.log(`Publishing an Event using Redis to: ${JSON.stringify(requestBody)}`);
-      res.json({ detail: 'Publishing an Event using Redis successful' });
+      //console.log(`Publishing an Event using Redis to: ${JSON.stringify(requestBody)}`);
+
+      res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, { detail: 'Publishing a message using Redis successful' }));
+      return message;
     } catch (err) {
       console.error(err); // Log the error for debugging
-      res.status(400).json({ error: 'Something went wrong' }); // Send an error response
+      res.status(400).json({ error: 'Something went wrong' });
     }
   }
 }
