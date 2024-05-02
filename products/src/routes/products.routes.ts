@@ -23,6 +23,6 @@ router.delete('/:id', productController.deleteBookById);
 router.post('/singleImage', imageStorage.single('image'), productController.uploadImage);
 
 //route to subscribe to channel
-router.get('/subscribe', productController.subscribeMessage);
+router.post('/subscriber', productController.subscribeMessage);
 
 export default router;

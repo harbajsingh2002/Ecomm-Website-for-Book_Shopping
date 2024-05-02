@@ -132,6 +132,7 @@ export class BooksServices {
 
   // Function to subscribe to publishe messages
   public static async subscribeToMessages() {
+    console.log('service');
     const redisSubscriber = new Redis();
 
     redisSubscriber.on('message', function (channel, message) {

@@ -100,6 +100,7 @@ export class productController {
 
   public static async subscribeMessage(channelName: string, req: Request, res: Response) {
     try {
+      console.log('controller');
       const redisSubscriber = new Redis();
       // Subscribe to the specified channel
       redisSubscriber.subscribe(channelName, function (err, count) {
