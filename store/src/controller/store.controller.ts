@@ -154,11 +154,11 @@ export class StoreController {
 
       //console.log(`Publishing an Event using Redis to: ${JSON.stringify(requestBody)}`);
 
-      res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, { detail: 'Publishing a message using Redis successful' }));
+      res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, { messagew: 'Publishing a message using Redis successfull' }));
       return message;
-    } catch (err) {
-      console.error(err); // Log the error for debugging
-      res.status(400).json({ error: 'Something went wrong' });
+    } catch (err: any) {
+      //logger.error(MESSAGE.errorLog('userDelete', 'userController', err))
+      res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.INTERNET_SERVER_ERROR));
     }
   }
 }

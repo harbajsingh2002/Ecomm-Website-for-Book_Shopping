@@ -4,6 +4,9 @@ import IBooks from '../utilis/interface/IBooks';
 import path from 'path';
 import redis from '../config/redis.client';
 import redisClient from '../config/redis.client';
+
+const redisSubscriber = new Redis();
+
 export class BooksServices {
   public static async addNewBook(body: IBooks) {
     try {
@@ -130,9 +133,14 @@ export class BooksServices {
     }
   }
 
-  // Function to subscribe to publishe messages
-  public static async subscribeToMessages(channelName: string) {
-    const redisSubscriber = new Redis();
+  //Subscribe to publishe messages
+  public static async subscribeToMessages(channelName: string, message: string, subscriber: string) {
+    const publisher = new Redis();
+    if (channelName == 'storeChannel') {
+      const storeData = JSON.parse(message);
+      await publisher.publish('productChannel', JSON.stringify(storeData));
+      return storeData;
+    }
 
     redisSubscriber.subscribe(channelName, (err, channelName) => {
       if (err) {
@@ -141,21 +149,18 @@ export class BooksServices {
         console.log(`Subscribed to ${channelName} channel(s).`);
       }
     });
-    redisSubscriber.on('message', (channel, message) => {
-      console.log(`Received message from channel ${channel}: ${message}`);
 
-      try {
-        const parsedMessage = JSON.parse(message);
+    try {
+      const parsedMessage = JSON.parse(message);
+      console.log('Processing the message...');
+      console.log('Parsed message:', parsedMessage);
 
-        console.log('Processing the message...');
-        console.log('Parsed message:', parsedMessage);
-
-        if (parsedMessage.type === 'request') {
-          console.log('Responding to the request...');
-        }
-      } catch (err: any) {
-        throw new Error(err.message);
+      if (parsedMessage.type === 'request') {
+        console.log('Responding to the request...');
       }
-    });
+      return parsedMessage;
+    } catch (err: any) {
+      throw new Error(err.message);
+    }
   }
 }

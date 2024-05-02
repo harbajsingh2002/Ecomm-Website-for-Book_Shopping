@@ -169,7 +169,7 @@ export class StoreServices {
   }
 
   //Publish Message
-  public static async publishMessage(req: Request, res: Response, message: any) {
+  public static async publishMessage(req: Request, res: Response, message: string, publisher: string) {
     try {
       console.log('Inside service');
       const requestBody = req.body;

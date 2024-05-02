@@ -8,10 +8,12 @@ import ioRedisClient from './src/config/ioRedis.client';
 import redisClient from './src/config/redis.client';
 import Redis from 'ioredis';
 import { BooksServices } from './src/services/products.services';
+import { subscribeAll } from './src/redis';
+
 const subsciber = new Redis();
 // import NRP from 'node-redis-pubsub';
 
-//configuring dotenv to load environment variables from a .env
+//configuring the .env
 dotenv.config();
 
 console.log(process.env.PORT);
@@ -58,15 +60,8 @@ connectDB();
 // subsciber.on('message', (channel, Message) => {
 //   console.log(`received the store data from${channel}:`, JSON.parse(Message));
 // });
+subscribeAll();
 
-const channelName = 'storeChannel';
-BooksServices.subscribeToMessages(channelName)
-  .then(() => {
-    console.log(`Subscribed to ${channelName} channel`);
-  })
-  .catch((err) => {
-    console.error(`Error subscribing to ${channelName} channel:`, err);
-  });
 //Redis connection
 redisClient;
 ioRedisClient;
