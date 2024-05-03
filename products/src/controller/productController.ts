@@ -101,31 +101,52 @@ export class productController {
   //Subscriber message
   public static async subscribeMessage(req: Request, res: Response) {
     try {
-      let channelName: string = 'storeChannel';
+      const publisher = await Redis.createClient();
+      const subscriber = await Redis.createClient();
 
-      redisSubscriber.subscribe(channelName, (err, channel) => {
-        if (err) {
-          console.error('Error subscribing to channel:', err);
-          return res.status(500).json({ error: 'Error subscribing to channel' });
-        } else {
-          console.log(`Subscribed to ${channel} channel(s).`);
-        }
-      });
+      const channelName = 'productChannel';
 
-      redisSubscriber.on('error', (err) => {
-        console.error('Redis error:', err);
-      });
+      // Promisify the subscribe method to use async/await
+      const subscribeAsync = (subscriber: Redis, channel: string) => {
+        return new Promise((resolve, reject) => {
+          subscriber.subscribe(channel, (err: any, channel: unknown) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(channel);
+            }
+          });
+        });
+      };
 
-      redisSubscriber.on('message', (channel, message) => {
+      // Function to handle incoming messages
+      subscriber.on('message', (channel, message) => {
         try {
-          console.log(`Received message from channel ${channel}: ${message}`);
-          res.json({ data: message });
+          console.log(`Received ${message} from ${channel}`);
+          return res.json({ channel: channel });
+          // Process your message here
         } catch (error) {
           console.error('Error handling message:', error);
         }
       });
 
-      return res.json({ data: `Subscription to ${channelName} initiated.` });
+      // Start the subscription and handle any errors
+      await (async () => {
+        try {
+          // Subscribe to the channel
+          await subscribeAsync(subscriber, channelName);
+          console.log(`Subscribed to ${channelName} channel`);
+
+          // Publish a message
+          publisher.publish(channelName, 'message');
+
+          // Respond to the client
+          console.log(`Message published to ${channelName}`);
+        } catch (error) {
+          console.error('Error subscribing to channel:', error);
+          // Handle error response here
+        }
+      })();
     } catch (err) {
       console.error('Error:', err);
       res.status(400).json({ error: 'Something went wrong' });

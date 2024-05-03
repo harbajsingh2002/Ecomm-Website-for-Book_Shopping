@@ -7,7 +7,6 @@ import cors from 'cors';
 import ioRedisClient from './src/config/ioRedis.client';
 import redisClient from './src/config/redis.client';
 import Redis from 'ioredis';
-import { BooksServices } from './src/services/products.services';
 import { subscribeAll } from './src/redis';
 
 const subsciber = new Redis();
@@ -16,14 +15,16 @@ const subsciber = new Redis();
 //configuring the .env
 dotenv.config();
 
-console.log(process.env.PORT);
-console.log(process.env.MONGODB_URI);
+//console.log(process.env.PORT);
+//console.log(process.env.MONGODB_URI);
 
 //Setting Up Express App
 const app = express();
 
-//Setting Up Middleware: Using helmet() to enhance the app's security by setting various HTTP headers and cors() to enable Cross-Origin Resource Sharing.
+//Setting Up Middleware:
+//Using helmet() to enhance the app's security by setting various HTTP headers
 app.use(helmet());
+//Cors() to enable Cross-Origin Resource Sharing
 app.use(cors());
 
 // Setting Port

@@ -4,6 +4,7 @@ import IBooks from '../utilis/interface/IBooks';
 import path from 'path';
 import redis from '../config/redis.client';
 import redisClient from '../config/redis.client';
+import { error } from 'console';
 
 const redisSubscriber = new Redis();
 
@@ -125,9 +126,7 @@ export class BooksServices {
     } catch (err: any) {
       if (err.code === 'ENOENT') {
         console.error('File or directory not found:', err.path);
-        // Check if the directory exists and the path is correct
       } else {
-        // Handle other types of errors
         console.error('An error occurred:', err);
       }
     }
@@ -135,11 +134,20 @@ export class BooksServices {
 
   //Subscribe to publishe messages
   public static async subscribeToMessages(channelName: string, message: string, subscriber: string) {
+    // const err = error;
+    // if (err) {
+    //   console.error('Failed to subscribe: %s', err);
+    // } else {
+    //   console.log(`Subscribed successfully! This client is currently subscribed to channels.`);
+    // }
     const publisher = new Redis();
     if (channelName == 'storeChannel') {
-      const storeData = JSON.parse(message);
-      await publisher.publish('productChannel', JSON.stringify(storeData));
-      return storeData;
+      const publisher = Redis.createClient();
+
+      await publisher.connect();
+      // const storeData = JSON.parse(message);
+      const rsp = await publisher.publish('productChannel', message);
+      // return storeData;
     }
 
     redisSubscriber.subscribe(channelName, (err, channelName) => {

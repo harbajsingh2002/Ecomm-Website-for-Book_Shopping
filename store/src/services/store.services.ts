@@ -178,7 +178,7 @@ export class StoreServices {
       //   date: new Intl.DateTimeFormat('es-ES').format(new Date()),
       // };
 
-      const result = redisClient.publish('Store is coming with new books', JSON.stringify(message));
+      const result = redisClient.publish('channelName', JSON.stringify(message));
 
       console.log(`Publishing an Event using Redis to: ${JSON.stringify(requestBody)}`);
 

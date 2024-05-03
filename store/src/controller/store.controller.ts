@@ -6,6 +6,8 @@ import bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import redisClient from '../config/redis.client';
 import { channel } from 'diagnostics_channel';
+import { string } from 'joi';
+import { Redis } from 'ioredis';
 export class StoreController {
   public static async createNewStore(req: Request, res: Response) {
     try {
@@ -149,12 +151,15 @@ export class StoreController {
       };
       // const result = await StoreServices.publishMessage(requestBody, res, message);
 
-      redisClient.publish('storeChannel', JSON.stringify(message));
-      console.log('publish result', message);
+      let channelName: string = 'storeChannel';
+      const publisher = new Redis();
+
+      await publisher.subscribe('productChannel', (message) => {
+        console.log(message); // 'message'
+      });
 
       //console.log(`Publishing an Event using Redis to: ${JSON.stringify(requestBody)}`);
-
-      res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, { messagew: 'Publishing a message using Redis successfull' }));
+      res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, message, 'Publishing a message using Redis successfull'));
       return message;
     } catch (err: any) {
       //logger.error(MESSAGE.errorLog('userDelete', 'userController', err))
