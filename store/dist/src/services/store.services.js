@@ -13,21 +13,30 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StoreServices = void 0;
-const store_model_1 = __importDefault(require("../model/store.model"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const store_model_2 = __importDefault(require("../model/store.model"));
+const store_model_1 = __importDefault(require("../model/store.model"));
+const redis_client_1 = __importDefault(require("../config/redis.client"));
 class StoreServices {
-    static deleteStore(body, params) {
-        throw new Error("Method not implemented.");
-    }
     static createNewStore(body) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                //const { error } = await Store.valStore.validate(req.body)
+                // if (error) {
+                //     return res.status(400).json({
+                //         error: error.details.map((err:any) => err.message.replace(/"/g, ''))
+                //     });
+                // }
                 const { storeName, email, password, contact, address, description } = body;
                 // Input validation
                 if (!storeName || !email || !password) {
-                    throw new Error("Store name, email, and password are required");
+                    throw new Error('Store name, email, and password are required');
+                }
+                const checkStore = yield store_model_1.default.findOne({
+                    $and: [{ email: body.email }, { isDeleted: false }],
+                });
+                if (checkStore) {
+                    //return error
+                    throw new Error('Email already existed');
                 }
                 const hashedPassword = yield bcrypt_1.default.hash(body.password, 10);
                 const newStore = yield store_model_1.default.create({
@@ -39,59 +48,49 @@ class StoreServices {
                     description: body.description,
                 });
                 return newStore.save();
-                // return newStore
             }
             catch (error) {
                 throw new Error();
             }
         });
     }
-    //Login Store
-    static login(email, password) {
+    // //Login Store
+    // public static async login(email: string, password: string) {
+    //   try {
+    //     if (!email || !password) {
+    //       throw new Error('Store name, email, and password are required');
+    //     }
+    //     // Find the store based on the provided email
+    //     const store = await this.getByAttribute({ email });
+    //     if (!store) {
+    //       throw new Error('Store not found');
+    //     }
+    //     if (store) {
+    //       const isPasswordValid = await bcrypt.compare(password, store.password);
+    //       if (!isPasswordValid) {
+    //         throw new Error('Incorrect password');
+    //       } else {
+    //         // if password is valid den generate JWT token
+    //         const token = jwt.sign({ storeId: store._id, email }, process.env.Token_Key!, { expiresIn: '30min' });
+    //         return { _id: store._id, email: store.email, token: token };
+    //       }
+    //     } else if (store) {
+    //       return 'invalidStore';
+    //     } else {
+    //       return 'notExist';
+    //     }
+    //   } catch (error) {
+    //     // Handle errors
+    //     throw new Error('Login failed');
+    //   }
+    // }
+    // Get Store by Id
+    static getStoreById(_id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                if (!email || !password) {
-                    throw new Error("Store name, email, and password are required");
-                }
-                // Find the store based on the provided email
-                const store = yield store_model_1.default.findOne({ email });
-                if (!store) {
-                    throw new Error("Store not found");
-                }
-                if (store) {
-                    // Compare the provided password with the hashed password stored in the database
-                    const isPasswordValid = yield bcrypt_1.default.compare(password, store.password);
-                    if (!isPasswordValid) {
-                        throw new Error("Incorrect password");
-                    }
-                    else {
-                        // if password is valid den generate JWT token
-                        const token = jsonwebtoken_1.default.sign({ storeId: store._id, email }, process.env.Token_Key, { expiresIn: "30min" });
-                        return store;
-                    }
-                }
-                else if (store) {
-                    return "invalidStore";
-                }
-                else {
-                    return "notExist";
-                }
-            }
-            catch (error) {
-                // Handle errors
-                throw new Error("Login failed");
-            }
-        });
-    }
-    // Get Store by id
-    static getStoreById(data) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const storeId = data.id;
-                console.log(storeId);
-                const findStore = yield store_model_2.default.findOne({ where: { id: storeId } });
+                const findStore = yield this.getByAttribute({ _id });
                 if (!findStore) {
-                    throw new Error("Store not found");
+                    throw new Error('Store not found');
                 }
                 return findStore;
             }
@@ -100,17 +99,32 @@ class StoreServices {
             }
         });
     }
-    //Get All store
-    static getAllStore(query) {
+    // //Get All store
+    // public static async getAllStore(query: any) {
+    //   try {
+    //     const storeListing = await Store.find();
+    //     console.log(storeListing);
+    //     // return await Store.find()
+    //     const pagination = query.pagination ? parseInt(query.pagination) : 10;
+    //     // PageNumber From which Page to Start
+    //     const pageNumber = query.page ? parseInt(query.page) : 1;
+    //     stores
+    //       .find({})
+    //       .sort({ id: 1 })
+    //       .skip((pageNumber - 1) * pagination)
+    //       //limit is number of Records we wantt o display
+    //       .limit(pagination)
+    //       .then((data) => {});
+    //     return stores;
+    //   } catch (err: any) {
+    //     throw new Error(err.message);
+    //   }
+    // }
+    static getAllStore() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const storeListing = yield store_model_2.default.find({
-                    where: { isDeleted: false },
-                    attributes: ['id', 'name', 'age', 'email'],
-                    order: [['createdAt', 'asc']],
-                    offset: query.page ? (parseInt(query.page) - 1) * parseInt(query.limit) : 0,
-                    limit: query.limit ? parseInt(query.limit) : 10,
-                });
+                const storeListing = yield store_model_1.default.find();
+                console.log(storeListing);
                 return storeListing;
             }
             catch (err) {
@@ -119,16 +133,11 @@ class StoreServices {
         });
     }
     //Update Store
-    static updateStore(body, params) {
+    static updateStore(_id, reqData) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const store = yield store_model_2.default.findOne({ where: { _id: params.id } });
-                if (!store) {
-                    return "notExist";
-                }
-                else {
-                    return yield store.updateOne(body);
-                }
+                const updatedStore = yield store_model_1.default.findByIdAndUpdate(_id, Object.assign({}, reqData), { new: true, useFindAndModify: true });
+                return updatedStore;
             }
             catch (err) {
                 throw new Error(err.message);
@@ -136,23 +145,58 @@ class StoreServices {
         });
     }
     //Soft Delete Store
-    deleteStore(body, params) {
+    static deleteStore(reqData) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const store = yield store_model_2.default.findOne({ where: { id: params.id } });
+                const storeId = reqData.params.id;
+                const store = yield store_model_1.default.findById(storeId);
+                //console.log(storeId)
+                // const store = await Store.findOne({ where: { id: storeId.id } });
                 if (!store) {
-                    return "notExist";
+                    return 'notExist';
                 }
                 else {
                     const date = new Date();
-                    const existingStore = yield store.updateOne({
+                    const existingStore = yield store_model_1.default.findByIdAndUpdate(storeId, {
                         isDeleted: true,
+                        isActive: false,
                         deletedAt: date,
                     });
                     return existingStore;
                 }
             }
             catch (err) {
+                throw new Error(err.message);
+            }
+        });
+    }
+    static getByAttribute(attributes) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const findStore = yield store_model_1.default.findOne(attributes).lean();
+                return findStore;
+            }
+            catch (err) {
+                throw new Error(err.message);
+            }
+        });
+    }
+    //Publish Message
+    static publishMessage(req, res, message, publisher) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log('Inside service');
+                const requestBody = req.body;
+                // const message = {
+                //   message: requestBody,
+                //   date: new Intl.DateTimeFormat('es-ES').format(new Date()),
+                // };
+                const result = redis_client_1.default.publish('channelName', JSON.stringify(message));
+                console.log(`Publishing an Event using Redis to: ${JSON.stringify(requestBody)}`);
+                return result;
+            }
+            catch (err) {
+                console.error(err);
                 throw new Error(err.message);
             }
         });

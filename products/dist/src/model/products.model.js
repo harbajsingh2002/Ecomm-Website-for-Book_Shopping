@@ -28,14 +28,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const moment_1 = __importDefault(require("../utilis/moment/moment"));
-const uuid_1 = __importDefault(require("uuid"));
+const uuid_1 = require("uuid");
+//import { nanoid } from 'nanoid'
 const productSchema = new mongoose_1.Schema({
-    _id: {
+    id: {
         type: String,
-        default: function genUUID() {
-            uuid_1.default.v1();
-        },
+        default: uuid_1.v4,
+        index: { unique: true },
+        required: true,
     },
+    // _id: {
+    //   type: String,
+    //   default: () => nanoid(),
+    // },
     title: {
         type: String,
         required: true,
@@ -43,7 +48,6 @@ const productSchema = new mongoose_1.Schema({
     author: {
         type: String,
         required: true,
-        unique: true,
     },
     description: {
         type: String,
@@ -55,12 +59,35 @@ const productSchema = new mongoose_1.Schema({
     price: {
         type: Number,
         required: true,
-        unique: true,
     },
-    // image: {
-    //   type: binary,
-    //   required: false,
-    // },
+    image: {
+        type: String,
+        required: false,
+    },
+    // images: [
+    //   {
+    //     //Array of object
+    //     type: String,
+    //     required: false,
+    //   },
+    // ],
+    isActive: {
+        type: Boolean,
+        default: true,
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false,
+    },
+    deleted_At: {
+        type: Date,
+        allowNull: true,
+    },
+    deleted_by: {
+        // type: Number,
+        type: String,
+        allowNull: true,
+    },
     timeStamp: moment_1.default,
 });
 const Books = mongoose_1.default.model('Books', productSchema);

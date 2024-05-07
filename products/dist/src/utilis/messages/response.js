@@ -1,22 +1,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.STATUS_CODE = exports.MESSAGE = exports.failAction = exports.successAction = void 0;
-const successAction = (statusCode, data, message = "Success") => {
+const successAction = (statusCode, data, message = 'Success') => {
     return { statusCode, data, message };
 };
 exports.successAction = successAction;
-const failAction = (statusCode, errorMessage, message = "Fail") => {
+const failAction = (statusCode, errorMessage, message = 'Fail') => {
     return { statusCode, errorMessage, message };
 };
 exports.failAction = failAction;
 exports.MESSAGE = {
-    SOMETHING_WENT_WRONG: "Something went wrong",
-    TOKEN_REQUIRED: "Auth token is requried.",
-    TOKEN_EXPIRED: "Session expired, please login again.",
-    LOGIN: "Login successfully",
-    USER_NOT_FOUND: "user not found",
-    VALIDATION_ERROR: "Validation error. Please check your params and try again.",
-    Invalidlogin: "Invalid login credentials. Please check and try again.",
+    SOMETHING_WENT_WRONG: 'Something went wrong',
+    TOKEN_REQUIRED: 'Auth token is requried.',
+    TOKEN_EXPIRED: 'Session expired, please login again.',
+    LOGIN: 'Login successfully',
+    USER_NOT_FOUND: 'user not found',
+    VALIDATION_ERROR: 'Validation error. Please check your params and try again.',
+    Invalidlogin: 'Invalid login credentials. Please check and try again.',
     add: (labal) => {
         return `${labal} added successfully.`;
     },
@@ -28,6 +28,9 @@ exports.MESSAGE = {
     },
     delete: (labal) => {
         return `${labal} deleted successfully.`;
+    },
+    upload: (label) => {
+        return '${label} uploaded successfully';
     },
     notExist: (labal) => {
         return `${labal} not exist.`;

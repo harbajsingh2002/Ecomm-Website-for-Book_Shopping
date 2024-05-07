@@ -99,57 +99,98 @@ export class productController {
   }
 
   //Subscriber message
+  // public static async subscribeMessage(req: Request, res: Response) {
+  //   try {
+  //     const publisher = await Redis.createClient();
+  //     const subscriber = await Redis.createClient();
+
+  //     const channelName = 'storeChannel';
+
+  //     // Promisify the subscribe method to use async/await
+  //     const subscribeAsync = (subscriber: Redis, channel: string) => {
+  //       return new Promise((resolve, reject) => {
+  //         subscriber.subscribe(channel, (err: any, channel: unknown) => {
+  //           if (err) {
+  //             reject(err);
+  //           } else {
+  //             resolve(channel);
+  //           }
+  //         });
+  //       });
+  //     };
+
+  //     // Function to handle incoming messages
+  //     subscriber.on('message', (channel, message) => {
+  //       try {
+  //         console.log(`Received ${message} from ${channel}`);
+  //         return res.json({ channel: channel });
+  //       } catch (error) {
+  //         console.error('Error handling message:', error);
+  //       }
+  //     });
+
+  //     // Start the subscription and handle any errors
+  //     await (async () => {
+  //       try {
+  //         // Subscribe to the channel
+  //         await subscribeAsync(subscriber, channelName);
+  //         console.log(`Subscribed to ${channelName} channel`);
+
+  //         // Publish a message to productChannel
+  //         publisher.publish(channelName, 'message');
+
+  //         // Respond to the client
+  //         console.log(`Message published by ${channelName}`);
+  //       } catch (error) {
+  //         console.error('Error subscribing to channel:', error);
+  //         // Handle error response here
+  //       }
+  //     })();
+  //   } catch (err) {
+  //     console.error('Error:', err);
+  //     res.status(400).json({ error: 'Something went wrong' });
+  //   }
+  // }
   public static async subscribeMessage(req: Request, res: Response) {
-    try {
-      const publisher = await Redis.createClient();
-      const subscriber = await Redis.createClient();
+    // Subscribe to the 'storeChannel' channel
 
-      const channelName = 'productChannel';
+    const subscriber = new Redis();
 
-      // Promisify the subscribe method to use async/await
-      const subscribeAsync = (subscriber: Redis, channel: string) => {
-        return new Promise((resolve, reject) => {
-          subscriber.subscribe(channel, (err: any, channel: unknown) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(channel);
-            }
-          });
-        });
-      };
+    subscriber.subscribe('storeChannel', (err, count) => {
+      if (err) {
+        console.error('Error subscribing:', err);
+        res.status(500).json({ success: false, error: 'Failed to subscribe to channel' });
+        return;
+      }
+      console.log(`Subscribed to ${count} channel(s).`);
+      res.status(200).json({ success: true, message: `Subscribed to ${count} channel(s)` });
+    });
 
-      // Function to handle incoming messages
-      subscriber.on('message', (channel, message) => {
-        try {
-          console.log(`Received ${message} from ${channel}`);
-          return res.json({ channel: channel });
-          // Process your message here
-        } catch (error) {
-          console.error('Error handling message:', error);
+    // Listen for messages on the subscribed channel
+    subscriber.on('message', (channel, message) => {
+      console.log(`Received message from channel ${channel}: ${message}`);
+
+      // Example: Process the received message (e.g., parse JSON message)
+      try {
+        const parsedMessage = JSON.parse(message);
+        console.log('Parsed message:', parsedMessage);
+
+        // Example: Perform actions based on the content of the message
+        if (parsedMessage.action === 'update') {
+          // Perform update operation based on message content
+          console.log('Performing update operation...');
+        } else if (parsedMessage.action === 'delete') {
+          // Perform delete operation based on message content
+          console.log('Performing delete operation...');
         }
-      });
 
-      // Start the subscription and handle any errors
-      await (async () => {
-        try {
-          // Subscribe to the channel
-          await subscribeAsync(subscriber, channelName);
-          console.log(`Subscribed to ${channelName} channel`);
-
-          // Publish a message
-          publisher.publish(channelName, 'message');
-
-          // Respond to the client
-          console.log(`Message published to ${channelName}`);
-        } catch (error) {
-          console.error('Error subscribing to channel:', error);
-          // Handle error response here
-        }
-      })();
-    } catch (err) {
-      console.error('Error:', err);
-      res.status(400).json({ error: 'Something went wrong' });
-    }
+        // Example: Send a response back to the client
+        // res.status(200).json({ success: true, message: 'Message processed successfully' });
+      } catch (error) {
+        console.error('Error processing message:', error);
+        // Handle error (e.g., log error, send error response)
+        // res.status(500).json({ success: false, error: 'Failed to process message' });
+      }
+    });
   }
 }

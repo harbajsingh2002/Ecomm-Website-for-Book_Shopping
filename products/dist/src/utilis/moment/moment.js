@@ -9,15 +9,11 @@ const timeStamp = {
         type: Number,
         default: (0, moment_1.default)(),
     },
-    deleted_At: {
-        type: Number,
-        default: (0, moment_1.default)(),
-    },
-    deleted_by: {
-        type: Number,
-        default: (0, moment_1.default)(),
-    },
-    is_deleted_: {
+    // is_Available: {
+    //   type: Boolean,
+    //   default: true,
+    // },
+    updated_At: {
         type: Number,
         default: (0, moment_1.default)(),
     },

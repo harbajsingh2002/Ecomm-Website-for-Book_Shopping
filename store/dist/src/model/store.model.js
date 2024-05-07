@@ -67,7 +67,11 @@ exports.storeSchema = new mongoose_1.Schema({
         type: Boolean,
         default: false,
     },
+    // message: {
+    //   type: string,
+    //   default: false,
+    // },
     timeStamp: moment_1.default,
 });
-const Store = mongoose_1.default.model("Store", exports.storeSchema);
+const Store = mongoose_1.default.model('Store', exports.storeSchema);
 exports.default = Store;
