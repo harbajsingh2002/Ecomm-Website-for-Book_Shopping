@@ -16,6 +16,9 @@ exports.StoreServices = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const store_model_1 = __importDefault(require("../model/store.model"));
 const redis_client_1 = __importDefault(require("../config/redis.client"));
+const ioredis_1 = require("ioredis");
+const subscriber = new ioredis_1.Redis();
+const publisher = new ioredis_1.Redis();
 class StoreServices {
     static createNewStore(body) {
         return __awaiter(this, void 0, void 0, function* () {

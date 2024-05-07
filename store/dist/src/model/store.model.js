@@ -39,6 +39,10 @@ exports.storeSchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
+    // productId: {
+    //   type: String,
+    //   required: true,
+    // },
     email: {
         type: String,
         required: true,

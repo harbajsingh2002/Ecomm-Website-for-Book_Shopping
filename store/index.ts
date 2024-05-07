@@ -7,7 +7,6 @@ import cors from 'cors';
 import ioRedisClient from './src/config/ioRedis.client';
 import redisClient from './src/config/redis.client';
 import Redis from 'ioredis';
-// import NRP from 'node-redis-pubsub';
 
 dotenv.config();
 
@@ -21,12 +20,6 @@ const port = process.env.PORT || 3002;
 
 app.use(express.json());
 
-//
-// const nrp = new NRP.NodeRedisPubSub({
-//   PORT: 6379,
-//   scope: 'microservice',
-// });
-
 // API Routes
 app.use('/api/store', storeRouter);
 
@@ -37,12 +30,12 @@ app.get('/', (req: Request, res: Response) => {
 app.listen(port, () => {
   console.log(`[server]: Store is running at port: ${port}`);
 });
+
 // Database connection
 connectDB();
 
 //Publisher
 function publisherMessage(channel: string, message: any) {
-  // Publish the message to the specified channel
   redisClient.publish(channel, JSON.stringify(message));
   console.log('Message published to channel:', channel);
 }

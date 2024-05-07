@@ -4,7 +4,7 @@ import connectDB from './src/config/db.config';
 import productRouter from './src/routes/products.routes';
 import helmet from 'helmet';
 import cors from 'cors';
-import ioRedisClient from './src/config/ioRedis.client';
+// import ioRedisClient from './src/config/ioRedis.client';
 import redisClient from './src/config/redis.client';
 import Redis from 'ioredis';
 import { subscribeAll } from './src/redis';
@@ -65,4 +65,4 @@ subscribeAll();
 
 //Redis connection
 redisClient;
-ioRedisClient;
+// ioRedisClient;

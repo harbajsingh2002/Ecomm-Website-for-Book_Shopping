@@ -151,9 +151,8 @@ export class productController {
   //     res.status(400).json({ error: 'Something went wrong' });
   //   }
   // }
-  public static async subscribeMessage(req: Request, res: Response) {
-    // Subscribe to the 'storeChannel' channel
 
+  public static async subscribeToStore(req: Request, res: Response) {
     const subscriber = new Redis();
 
     subscriber.subscribe('storeChannel', (err, count) => {
@@ -166,29 +165,22 @@ export class productController {
       res.status(200).json({ success: true, message: `Subscribed to ${count} channel(s)` });
     });
 
-    // Listen for messages on the subscribed channel
     subscriber.on('message', (channel, message) => {
       console.log(`Received message from channel ${channel}: ${message}`);
 
-      // Example: Process the received message (e.g., parse JSON message)
       try {
         const parsedMessage = JSON.parse(message);
         console.log('Parsed message:', parsedMessage);
 
-        // Example: Perform actions based on the content of the message
         if (parsedMessage.action === 'update') {
-          // Perform update operation based on message content
           console.log('Performing update operation...');
         } else if (parsedMessage.action === 'delete') {
-          // Perform delete operation based on message content
           console.log('Performing delete operation...');
         }
 
-        // Example: Send a response back to the client
         // res.status(200).json({ success: true, message: 'Message processed successfully' });
       } catch (error) {
         console.error('Error processing message:', error);
-        // Handle error (e.g., log error, send error response)
         // res.status(500).json({ success: false, error: 'Failed to process message' });
       }
     });

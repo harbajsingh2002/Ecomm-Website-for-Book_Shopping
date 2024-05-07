@@ -154,12 +154,6 @@ class BooksServices {
     //Subscribe to publishe messages
     static subscribeToMessages(channelName, message, subscriber) {
         return __awaiter(this, void 0, void 0, function* () {
-            // const err = error;
-            // if (err) {
-            //   console.error('Failed to subscribe: %s', err);
-            // } else {
-            //   console.log(`Subscribed successfully! This client is currently subscribed to channels.`);
-            // }
             const publisher = new ioredis_1.default();
             if (channelName == 'storeChannel') {
                 const publisher = ioredis_1.default.createClient();

@@ -184,7 +184,6 @@ class StoreController {
                     channelName: 'storeChannel',
                     // date: new Intl.DateTimeFormat('es-ES').format(new Date()),
                 };
-                // const result = await StoreServices.publishMessage(requestBody, res, message);
                 let channelName = 'storeChannel';
                 const publisher = new ioredis_1.Redis();
                 yield publisher.subscribe('productChannel', (message) => {
@@ -202,3 +201,15 @@ class StoreController {
     }
 }
 exports.StoreController = StoreController;
+// public static async publishMessage(req: Request, res: Response,body :IStore) {
+//   try {
+//     const data = await StoreServices.createNewStore(req.body);
+//     if (data== "Product already Exist"){
+//       res.status((STATUS_CODE.SUCCESS).json(successResponse(STATUS_CODE.SUCCESS,data,MESSAGE))
+//     }else {
+//       res.status(STATUS_CODE.SUCCESS).json(successResponse(STATUS_CODE.SUCCESS, data, MESSAGE.add('product')));
+//     }
+//   } catch (err:any) {
+//     res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, MESSAGE.SOMETHING_WENT_WRONG));
+//   }
+// }

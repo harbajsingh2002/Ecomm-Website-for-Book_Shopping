@@ -8,6 +8,7 @@ import redisClient from '../config/redis.client';
 import { channel } from 'diagnostics_channel';
 import { string } from 'joi';
 import { Redis } from 'ioredis';
+import IStore from '../utilis/Istore/Istore';
 export class StoreController {
   public static async createNewStore(req: Request, res: Response) {
     try {
@@ -149,7 +150,6 @@ export class StoreController {
         channelName: 'storeChannel',
         // date: new Intl.DateTimeFormat('es-ES').format(new Date()),
       };
-      // const result = await StoreServices.publishMessage(requestBody, res, message);
 
       let channelName: string = 'storeChannel';
       const publisher = new Redis();
@@ -167,3 +167,16 @@ export class StoreController {
     }
   }
 }
+// public static async publishMessage(req: Request, res: Response,body :IStore) {
+//   try {
+//     const data = await StoreServices.createNewStore(req.body);
+//     if (data== "Product already Exist"){
+//       res.status((STATUS_CODE.SUCCESS).json(successResponse(STATUS_CODE.SUCCESS,data,MESSAGE))
+//     }else {
+//       res.status(STATUS_CODE.SUCCESS).json(successResponse(STATUS_CODE.SUCCESS, data, MESSAGE.add('product')));
+//     }
+
+//   } catch (err:any) {
+//     res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, MESSAGE.SOMETHING_WENT_WRONG));
+//   }
+// }

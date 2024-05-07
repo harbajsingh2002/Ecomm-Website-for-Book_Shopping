@@ -5,6 +5,9 @@ import Store from '../model/store.model';
 import IStore from '../utilis/Istore/Istore';
 import valStore from '../validation/store.validation';
 import redisClient from '../config/redis.client';
+import { Redis } from 'ioredis';
+const subscriber = new Redis();
+const publisher = new Redis();
 export class StoreServices {
   public static async createNewStore(body: IStore) {
     try {
@@ -188,4 +191,55 @@ export class StoreServices {
       throw new Error(err.message);
     }
   }
+
+  // public static async publishMessage(body: IStore) {
+  //   try {
+  //     // Check if the ride already exists
+  //     const ride = await stores.findById(body.id);
+  //     if (ride) {
+  //       return 'rideAlreadyExist';
+  //     } else {
+  //       // Subscribe to users channel to receive responses
+  //       subscriber.subscribe('productChannel');
+
+  //       // Publish user ID
+  //       async function publishUserId(data: any) {
+  //         await publisher.publish('storeChannel', JSON.stringify(data));
+  //         console.log(data, 'Store ID published');
+  //       }
+
+  //       // Publish productId and wait for response
+  //       await publishUserId(body.productId);
+
+  //       // // Wait for response about user
+  //       // const response = await redisResponse(body);
+  //       const response = await new Promise((resolve, reject) => {
+  //         subscriber.once('message', (channel, message) => {
+  //           if (channel === 'productChannel') {
+  //             const userData = JSON.parse(message);
+  //             console.log(userData, 'Received user data');
+  //             if (userData.id === body.productId) {
+  //               console.log('product found');
+  //               resolve('yes');
+  //             } else {
+  //               console.log('product not found');
+  //               resolve('no');
+  //             }
+  //           }
+  //         });
+  //       });
+
+  //       if (response === 'yes') {
+  //         console.log(body, 'message');
+  //         return await stores.create(body);
+  //         // return 'rideCreated';
+  //       } else {
+  //         console.log('product not found.');
+  //         return 'userNotFound';
+  //       }
+  //     }
+  //   } catch (err: any) {
+  //     throw new Error(err.message);
+  //   }
+  // }
 }

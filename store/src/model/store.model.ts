@@ -2,7 +2,7 @@ import mongoose, { Schema, model } from 'mongoose';
 import IStore from '../utilis/Istore/Istore';
 import timeStamp from '../utilis/moment/moment';
 import { nanoid } from 'nanoid';
-import { string } from 'joi';
+import { required, string } from 'joi';
 
 export const storeSchema = new Schema<IStore>({
   _id: {
@@ -13,6 +13,10 @@ export const storeSchema = new Schema<IStore>({
     type: String,
     required: true,
   },
+  // productId: {
+  //   type: String,
+  //   required: true,
+  // },
   email: {
     type: String,
     required: true,

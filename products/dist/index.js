@@ -9,7 +9,7 @@ const db_config_1 = __importDefault(require("./src/config/db.config"));
 const products_routes_1 = __importDefault(require("./src/routes/products.routes"));
 const helmet_1 = __importDefault(require("helmet"));
 const cors_1 = __importDefault(require("cors"));
-const ioRedis_client_1 = __importDefault(require("./src/config/ioRedis.client"));
+// import ioRedisClient from './src/config/ioRedis.client';
 const redis_client_1 = __importDefault(require("./src/config/redis.client"));
 const ioredis_1 = __importDefault(require("ioredis"));
 const redis_1 = require("./src/redis");
@@ -55,4 +55,4 @@ app.listen(port, () => {
 (0, redis_1.subscribeAll)();
 //Redis connection
 redis_client_1.default;
-ioRedis_client_1.default;
+// ioRedisClient;

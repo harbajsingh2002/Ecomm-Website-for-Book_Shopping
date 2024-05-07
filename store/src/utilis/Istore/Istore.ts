@@ -2,6 +2,7 @@ import { Document } from 'mongoose';
 
 export default interface IStore extends Document {
   storeName: string;
+  productId: string;
   email: string;
   password: string;
   contact: number;

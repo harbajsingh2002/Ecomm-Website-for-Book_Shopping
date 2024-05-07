@@ -134,12 +134,6 @@ export class BooksServices {
 
   //Subscribe to publishe messages
   public static async subscribeToMessages(channelName: string, message: string, subscriber: string) {
-    // const err = error;
-    // if (err) {
-    //   console.error('Failed to subscribe: %s', err);
-    // } else {
-    //   console.log(`Subscribed successfully! This client is currently subscribed to channels.`);
-    // }
     const publisher = new Redis();
     if (channelName == 'storeChannel') {
       const publisher = Redis.createClient();
