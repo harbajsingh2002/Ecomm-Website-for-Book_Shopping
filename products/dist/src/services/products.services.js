@@ -69,12 +69,21 @@ class BooksServices {
         });
     }
     //Get All Books
+    // public static async getAllbooks() {
+    //   try {
+    //     const bookListing = await Books.find();
+    //     console.log(bookListing);
+    //     return bookListing;
+    //   } catch (err: any) {
+    //     throw new Error(err.message);
+    //   }
+    // }
     static getAllbooks() {
-        return __awaiter(this, void 0, void 0, function* () {
+        return __awaiter(this, arguments, void 0, function* (pageNumber = 1, pageSize = 10) {
             try {
-                const bookListing = yield products_model_1.default.find();
-                console.log(bookListing);
-                return bookListing;
+                const skip = (pageNumber - 1) * pageSize;
+                const posts = yield products_model_1.default.aggregate([{ $sample: { size: 40 } }, { $skip: skip }, { $limit: pageSize }]);
+                return posts;
             }
             catch (err) {
                 throw new Error(err.message);

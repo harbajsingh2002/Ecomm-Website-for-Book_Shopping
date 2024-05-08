@@ -102,33 +102,22 @@ class StoreServices {
             }
         });
     }
-    // //Get All store
-    // public static async getAllStore(query: any) {
+    // listing of store
+    // public static async getAllStore() {
     //   try {
-    //     const storeListing = await Store.find();
-    //     console.log(storeListing);
-    //     // return await Store.find()
-    //     const pagination = query.pagination ? parseInt(query.pagination) : 10;
-    //     // PageNumber From which Page to Start
-    //     const pageNumber = query.page ? parseInt(query.page) : 1;
-    //     stores
-    //       .find({})
-    //       .sort({ id: 1 })
-    //       .skip((pageNumber - 1) * pagination)
-    //       //limit is number of Records we wantt o display
-    //       .limit(pagination)
-    //       .then((data) => {});
-    //     return stores;
+    // const storeListing = await Store.find();
+    // console.log(storeListing);
+    // return storeListing;
     //   } catch (err: any) {
     //     throw new Error(err.message);
     //   }
     // }
     static getAllStore() {
-        return __awaiter(this, void 0, void 0, function* () {
+        return __awaiter(this, arguments, void 0, function* (pageNumber = 1, pageSize = 10) {
             try {
-                const storeListing = yield store_model_1.default.find();
-                console.log(storeListing);
-                return storeListing;
+                const skip = (pageNumber - 1) * pageSize;
+                const posts = yield store_model_1.default.aggregate([{ $sample: { size: 40 } }, { $skip: skip }, { $limit: pageSize }]);
+                return posts;
             }
             catch (err) {
                 throw new Error(err.message);

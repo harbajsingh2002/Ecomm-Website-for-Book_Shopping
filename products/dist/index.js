@@ -14,7 +14,6 @@ const redis_client_1 = __importDefault(require("./src/config/redis.client"));
 const ioredis_1 = __importDefault(require("ioredis"));
 const redis_1 = require("./src/redis");
 const subsciber = new ioredis_1.default();
-// import NRP from 'node-redis-pubsub';
 //configuring the .env
 dotenv_1.default.config();
 //console.log(process.env.PORT);
@@ -31,10 +30,6 @@ const port = process.env.PORT || 3003;
 //Parsing Request Body:
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
-// const nrp = new NRP.NodeRedisPubSub({
-//   PORT: 6379,
-//   scope: 'microservice',
-// });
 // API Routes: define routes for handling product-
 app.use('/api/products', products_routes_1.default);
 //Basic route handler for the root URL ('/') which sends a simple message.
