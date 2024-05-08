@@ -10,7 +10,6 @@ import Redis from 'ioredis';
 import { subscribeAll } from './src/redis';
 
 const subsciber = new Redis();
-// import NRP from 'node-redis-pubsub';
 
 //configuring the .env
 dotenv.config();
@@ -34,11 +33,6 @@ const port = process.env.PORT || 3003;
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
-
-// const nrp = new NRP.NodeRedisPubSub({
-//   PORT: 6379,
-//   scope: 'microservice',
-// });
 
 // API Routes: define routes for handling product-
 app.use('/api/products', productRouter);

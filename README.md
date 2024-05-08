@@ -9,7 +9,7 @@ The back-end is built using NodeJS and ExpressJS. The data is stored in a MongoD
 Overall, the e-commerce platform is designed to be a scalable, robust, and secure system that allows customers to shop for products(Books) online with ease. The microservices architecture and use of DevOps tools ensures that the platform can be easily maintained and updated while minimizing downtime.
 
 Technologies Used:
-Nodejs
+Nodejs 
 MongoDB
 Git
 Github
@@ -39,7 +39,20 @@ Postman was used for manual testing in this application.
 
 ##********************Project Architecture*********************##
 project-root/
-│
+│── gateway/
+│   ├── config/
+│   │   └── models/
+│   │       ├── aplication.json
+│   │       ├── credentials.json
+│   │       └── user.ts
+├── gateway.config.yml
+│   │   └── system.config.yml
+│   │── server.ts      
+│   ├──.yo-rc.json/           
+│   ├── node_modules/
+│   ├── package.json
+│   ├── tsconfig.json
+│   └── ...
 ├── user-service/
 │   ├── src/
 │   │   ├── models/
