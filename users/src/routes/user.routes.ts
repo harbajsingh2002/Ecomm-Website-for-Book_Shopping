@@ -21,7 +21,7 @@ router.post('/create', userController.createNewUser);
 router.post('/login', userController.login);
 
 //Find all User
-router.get('/', auth, userController.findAllUser);
+router.get('/all', auth, userController.findAllUser);
 
 //Find a specific user
 router.get('/:id', userController.findUserById);

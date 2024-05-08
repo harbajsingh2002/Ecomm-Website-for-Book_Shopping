@@ -99,7 +99,7 @@ export class UserServices {
   //   }
   // }
 
-  public static async getAllStore(pageNumber = 1, pageSize = 10) {
+  public static async findAllUser(pageNumber = 1, pageSize = 10) {
     try {
       const skip = (pageNumber - 1) * pageSize;
       const posts = await User.aggregate([{ $sample: { size: 40 } }, { $skip: skip }, { $limit: pageSize }]);
