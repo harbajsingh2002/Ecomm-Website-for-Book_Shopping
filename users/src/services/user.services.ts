@@ -88,12 +88,22 @@ export class UserServices {
   }
 
   // //Get All store
-  public static async findAllUser() {
-    try {
-      const storeListing = await User.find();
-      console.log(storeListing);
+  // public static async findAllUser() {
+  //   try {
+  //     const storeListing = await User.find();
+  //     console.log(storeListing);
 
-      return storeListing;
+  //     return storeListing;
+  //   } catch (err: any) {
+  //     throw new Error(err.message);
+  //   }
+  // }
+
+  public static async getAllStore(pageNumber = 1, pageSize = 10) {
+    try {
+      const skip = (pageNumber - 1) * pageSize;
+      const posts = await User.aggregate([{ $sample: { size: 40 } }, { $skip: skip }, { $limit: pageSize }]);
+      return posts;
     } catch (err: any) {
       throw new Error(err.message);
     }

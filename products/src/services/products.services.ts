@@ -56,12 +56,21 @@ export class BooksServices {
   }
 
   //Get All Books
-  public static async getAllbooks() {
-    try {
-      const bookListing = await Books.find();
-      console.log(bookListing);
+  // public static async getAllbooks() {
+  //   try {
+  //     const bookListing = await Books.find();
+  //     console.log(bookListing);
 
-      return bookListing;
+  //     return bookListing;
+  //   } catch (err: any) {
+  //     throw new Error(err.message);
+  //   }
+  // }
+  public static async getAllbooks(pageNumber = 1, pageSize = 10) {
+    try {
+      const skip = (pageNumber - 1) * pageSize;
+      const posts = await Books.aggregate([{ $sample: { size: 40 } }, { $skip: skip }, { $limit: pageSize }]);
+      return posts;
     } catch (err: any) {
       throw new Error(err.message);
     }

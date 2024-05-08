@@ -93,37 +93,23 @@ export class StoreServices {
     }
   }
 
-  // //Get All store
-  // public static async getAllStore(query: any) {
+  // listing of store
+  // public static async getAllStore() {
   //   try {
-  //     const storeListing = await Store.find();
-  //     console.log(storeListing);
+  // const storeListing = await Store.find();
+  // console.log(storeListing);
+  // return storeListing;
 
-  //     // return await Store.find()
-
-  //     const pagination = query.pagination ? parseInt(query.pagination) : 10;
-  //     // PageNumber From which Page to Start
-  //     const pageNumber = query.page ? parseInt(query.page) : 1;
-
-  //     stores
-  //       .find({})
-  //       .sort({ id: 1 })
-  //       .skip((pageNumber - 1) * pagination)
-  //       //limit is number of Records we wantt o display
-  //       .limit(pagination)
-  //       .then((data) => {});
-  //     return stores;
   //   } catch (err: any) {
   //     throw new Error(err.message);
   //   }
   // }
 
-  public static async getAllStore() {
+  public static async getAllStore(pageNumber = 1, pageSize = 10) {
     try {
-      const storeListing = await Store.find();
-      console.log(storeListing);
-
-      return storeListing;
+      const skip = (pageNumber - 1) * pageSize;
+      const posts = await Store.aggregate([{ $sample: { size: 40 } }, { $skip: skip }, { $limit: pageSize }]);
+      return posts;
     } catch (err: any) {
       throw new Error(err.message);
     }
