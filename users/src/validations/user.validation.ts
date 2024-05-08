@@ -1,5 +1,6 @@
 import joi from 'joi';
 
+///
 const Listing = joi.object({
   limit: joi.number().required(),
   page: joi.number().required(),
