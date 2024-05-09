@@ -1,12 +1,12 @@
 import express, { Request, Response } from 'express';
-import dotenv, { config } from 'dotenv';
+import dotenv from 'dotenv';
 import connectDB from './src/config/db.config';
 import storeRouter from './src/routes/store.routes';
 import helmet from 'helmet';
 import cors from 'cors';
-import ioRedisClient from './src/config/ioRedis.client';
+// import ioRedisClient from './src/config/ioRedis.client';
 import redisClient from './src/config/redis.client';
-import Redis from 'ioredis';
+// import Redis from 'ioredis';
 
 dotenv.config();
 
@@ -45,4 +45,4 @@ publisherMessage('storeChannel', { key: 'value' });
 
 //Redis connection
 redisClient;
-ioRedisClient;
+// ioRedisClient;

@@ -1,15 +1,12 @@
 import express, { Request, Response } from 'express';
-import dotenv, { config } from 'dotenv';
+import dotenv from 'dotenv';
 import connectDB from './src/config/db.config';
 import productRouter from './src/routes/products.routes';
 import helmet from 'helmet';
 import cors from 'cors';
 // import ioRedisClient from './src/config/ioRedis.client';
 import redisClient from './src/config/redis.client';
-import Redis from 'ioredis';
 import { subscribeAll } from './src/redis';
-
-const subsciber = new Redis();
 
 //configuring the .env
 dotenv.config();

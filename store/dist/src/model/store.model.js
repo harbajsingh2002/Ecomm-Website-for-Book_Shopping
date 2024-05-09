@@ -71,6 +71,9 @@ exports.storeSchema = new mongoose_1.Schema({
         type: Boolean,
         default: false,
     },
+    productId: {
+        type: String,
+    },
     // message: {
     //   type: string,
     //   default: false,

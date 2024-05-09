@@ -1,12 +1,13 @@
 import Redis from 'ioredis';
 import Books from '../model/products.model';
 import IBooks from '../utilis/interface/IBooks';
-import path from 'path';
-import redis from '../config/redis.client';
-import redisClient from '../config/redis.client';
-import { error } from 'console';
+// import path from 'path';
+// import redis from '../config/redis.client';
+// import redisClient from '../config/redis.client';
+// import { error } from 'console';
 
-const redisSubscriber = new Redis();
+// const redisSubscriber = new Redis();
+const publisher = new Redis();
 
 export class BooksServices {
   public static async addNewBook(body: IBooks) {
@@ -115,8 +116,7 @@ export class BooksServices {
   //Upload imgae of book
   public static async uploadImage(body: IBooks, imagePath: string) {
     try {
-      //console.log('hjh');
-      const { title, author, description, category, price, image } = body;
+      const { title, author, description, category, price } = body;
       // const image = body.image
 
       //console.log(image);
@@ -129,47 +129,61 @@ export class BooksServices {
         image: imagePath,
       });
       return newBook.save();
-      // } catch (err: any) {
-      //   throw new Error(err.message)
-      // }
     } catch (err: any) {
-      if (err.code === 'ENOENT') {
-        console.error('File or directory not found:', err.path);
-      } else {
-        console.error('An error occurred:', err);
-      }
+      throw new Error(err.message);
     }
   }
 
   //Subscribe to publishe messages
-  public static async subscribeToMessages(channelName: string, message: string, subscriber: string) {
-    const publisher = new Redis();
-    if (channelName == 'storeChannel') {
-      const publisher = Redis.createClient();
+  // public static async subscribeToMessages(channelName: string, message: string) {
+  //   // const publisher = new Redis();
+  //   if (channelName == 'storeChannel') {
+  //     const publisher = Redis.createClient();
 
-      await publisher.connect();
-      // const storeData = JSON.parse(message);
-      const rsp = await publisher.publish('productChannel', message);
-      // return storeData;
-    }
+  //     await publisher.connect();
+  //     // const storeData = JSON.parse(message);
+  //     const storeData = await publisher.publish('productChannel', message);
+  //     return storeData;
+  //   }
 
-    redisSubscriber.subscribe(channelName, (err, channelName) => {
-      if (err) {
-        console.error('Error subscribing to channel:', err);
-      } else {
-        console.log(`Subscribed to ${channelName} channel(s).`);
-      }
-    });
+  //   redisSubscriber.subscribe(channelName, (err, channelName) => {
+  //     if (err) {
+  //       console.error('Error subscribing to channel:', err);
+  //     } else {
+  //       console.log(`Subscribed to ${channelName} channel(s).`);
+  //     }
+  //   });
 
+  //   try {
+  //     const parsedMessage = JSON.parse(message);
+  //     console.log('Processing the message...');
+  //     console.log('Parsed message:', parsedMessage);
+
+  //     if (parsedMessage.type === 'request') {
+  //       console.log('Responding to the request...');
+  //     }
+  //     return parsedMessage;
+  //   } catch (err: any) {
+  //     throw new Error(err.message);
+  //   }
+  // }
+
+  public static async subscribeToMessages(channelName: string, message: string) {
     try {
-      const parsedMessage = JSON.parse(message);
-      console.log('Processing the message...');
-      console.log('Parsed message:', parsedMessage);
+      if (channelName === 'storeChannel') {
+        const bookData: any = JSON.parse(message);
+        console.log('in', bookData);
+        // Process the received book-related data
+        const book = await Books.findOne({ where: { id: bookData } });
+        if (book) {
+          console.log('book', book);
+          // Process the user data as needed
 
-      if (parsedMessage.type === 'request') {
-        console.log('Responding to the request...');
+          await publisher.publish('productChannel', JSON.stringify(book));
+        } else {
+          await publisher.publish('productChannel', bookData);
+        }
       }
-      return parsedMessage;
     } catch (err: any) {
       throw new Error(err.message);
     }

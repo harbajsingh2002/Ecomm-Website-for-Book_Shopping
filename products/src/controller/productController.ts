@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { MESSAGE, STATUS_CODE, failAction, successAction } from '../utilis/messages/response';
 import { BooksServices } from '../services/products.services';
 import Redis from 'ioredis';
-const redisSubscriber = new Redis();
+// const redisSubscriber = new Redis();
 
 export class productController {
   public static async createNewProduct(req: Request, res: Response) {
@@ -76,6 +76,9 @@ export class productController {
   public static async deleteBookById(req: Request, res: Response) {
     try {
       const data = await BooksServices.deleteBook(req);
+      if (!data) {
+        res.status(STATUS_CODE.SUCCESS).json(failAction(STATUS_CODE.NOT_FOUND, MESSAGE.notExist('Book')));
+      }
       res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, MESSAGE.delete('Book')));
     } catch (err: any) {
       //logger.error(MESSAGE.errorLog('bookDelete', 'productController', err))
@@ -178,10 +181,10 @@ export class productController {
           console.log('Performing delete operation...');
         }
 
-        // res.status(200).json({ success: true, message: 'Message processed successfully' });
+        res.status(200).json({ success: true, message: 'Message processed successfully' });
       } catch (error) {
         console.error('Error processing message:', error);
-        // res.status(500).json({ success: false, error: 'Failed to process message' });
+        res.status(500).json({ success: false, error: 'Failed to process message' });
       }
     });
   }

@@ -15,7 +15,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BooksServices = void 0;
 const ioredis_1 = __importDefault(require("ioredis"));
 const products_model_1 = __importDefault(require("../model/products.model"));
-const redisSubscriber = new ioredis_1.default();
+// import path from 'path';
+// import redis from '../config/redis.client';
+// import redisClient from '../config/redis.client';
+// import { error } from 'console';
+// const redisSubscriber = new Redis();
+const publisher = new ioredis_1.default();
 class BooksServices {
     static addNewBook(body) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -161,32 +166,51 @@ class BooksServices {
         });
     }
     //Subscribe to publishe messages
-    static subscribeToMessages(channelName, message, subscriber) {
+    // public static async subscribeToMessages(channelName: string, message: string) {
+    //   // const publisher = new Redis();
+    //   if (channelName == 'storeChannel') {
+    //     const publisher = Redis.createClient();
+    //     await publisher.connect();
+    //     // const storeData = JSON.parse(message);
+    //     const storeData = await publisher.publish('productChannel', message);
+    //     return storeData;
+    //   }
+    //   redisSubscriber.subscribe(channelName, (err, channelName) => {
+    //     if (err) {
+    //       console.error('Error subscribing to channel:', err);
+    //     } else {
+    //       console.log(`Subscribed to ${channelName} channel(s).`);
+    //     }
+    //   });
+    //   try {
+    //     const parsedMessage = JSON.parse(message);
+    //     console.log('Processing the message...');
+    //     console.log('Parsed message:', parsedMessage);
+    //     if (parsedMessage.type === 'request') {
+    //       console.log('Responding to the request...');
+    //     }
+    //     return parsedMessage;
+    //   } catch (err: any) {
+    //     throw new Error(err.message);
+    //   }
+    // }
+    static subscribeToMessages(channelName, message) {
         return __awaiter(this, void 0, void 0, function* () {
-            const publisher = new ioredis_1.default();
-            if (channelName == 'storeChannel') {
-                const publisher = ioredis_1.default.createClient();
-                yield publisher.connect();
-                // const storeData = JSON.parse(message);
-                const rsp = yield publisher.publish('productChannel', message);
-                // return storeData;
-            }
-            redisSubscriber.subscribe(channelName, (err, channelName) => {
-                if (err) {
-                    console.error('Error subscribing to channel:', err);
-                }
-                else {
-                    console.log(`Subscribed to ${channelName} channel(s).`);
-                }
-            });
             try {
-                const parsedMessage = JSON.parse(message);
-                console.log('Processing the message...');
-                console.log('Parsed message:', parsedMessage);
-                if (parsedMessage.type === 'request') {
-                    console.log('Responding to the request...');
+                if (channelName === 'storeChannel') {
+                    const bookData = JSON.parse(message);
+                    console.log('in', bookData);
+                    // Process the received book-related data
+                    const book = yield products_model_1.default.findOne({ where: { id: bookData } });
+                    if (book) {
+                        console.log('book', book);
+                        // Process the user data as needed
+                        yield publisher.publish('productChannel', JSON.stringify(book));
+                    }
+                    else {
+                        yield publisher.publish('productChannel', bookData);
+                    }
                 }
-                return parsedMessage;
             }
             catch (err) {
                 throw new Error(err.message);

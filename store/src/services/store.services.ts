@@ -1,23 +1,15 @@
 import stores from '../model/store.model';
 import bcrypt from 'bcrypt';
-import * as jwt from 'jsonwebtoken';
+// import * as jwt from 'jsonwebtoken';
 import Store from '../model/store.model';
 import IStore from '../utilis/Istore/Istore';
-import valStore from '../validation/store.validation';
-import redisClient from '../config/redis.client';
 import { Redis } from 'ioredis';
 const subscriber = new Redis();
 const publisher = new Redis();
 export class StoreServices {
   public static async createNewStore(body: IStore) {
     try {
-      //const { error } = await Store.valStore.validate(req.body)
-      // if (error) {
-      //     return res.status(400).json({
-      //         error: error.details.map((err:any) => err.message.replace(/"/g, ''))
-      //     });
-      // }
-      const { storeName, email, password, contact, address, description } = body;
+      const { storeName, email, password } = body;
 
       // Input validation
       if (!storeName || !email || !password) {
@@ -93,7 +85,7 @@ export class StoreServices {
     }
   }
 
-  // listing of store
+  // listing of store : normal way
   // public static async getAllStore() {
   //   try {
   // const storeListing = await Store.find();
@@ -105,6 +97,7 @@ export class StoreServices {
   //   }
   // }
 
+  // listing of store using pagination
   public static async getAllStore(pageNumber = 1, pageSize = 10) {
     try {
       const skip = (pageNumber - 1) * pageSize;
@@ -158,74 +151,158 @@ export class StoreServices {
   }
 
   //Publish Message
-  public static async publishMessage(req: Request, res: Response, message: string, publisher: string) {
-    try {
-      console.log('Inside service');
-      const requestBody = req.body;
-      // const message = {
-      //   message: requestBody,
-      //   date: new Intl.DateTimeFormat('es-ES').format(new Date()),
-      // };
-
-      const result = redisClient.publish('channelName', JSON.stringify(message));
-
-      console.log(`Publishing an Event using Redis to: ${JSON.stringify(requestBody)}`);
-
-      return result;
-    } catch (err: any) {
-      console.error(err);
-      throw new Error(err.message);
-    }
-  }
-
-  // public static async publishMessage(body: IStore) {
+  // public static async publishMessage(req: Request, res: Response, message: string, publisher: string) {
   //   try {
-  //     // Check if the ride already exists
-  //     const ride = await stores.findById(body.id);
-  //     if (ride) {
-  //       return 'rideAlreadyExist';
+  //     console.log('Inside service');
+  //     const requestBody = req.body;
+  //     // const message = {
+  //     //   message: requestBody,
+  //     //   date: new Intl.DateTimeFormat('es-ES').format(new Date()),
+  //     // };
+
+  //     const result = redisClient.publish('channelName', JSON.stringify(message));
+
+  //     console.log(`Publishing an Event using Redis to: ${JSON.stringify(requestBody)}`);
+
+  //     return result;
+  //   } catch (err: any) {
+  //     console.error(err);
+  //     throw new Error(err.message);
+  //   }
+  // }
+
+  // public static async publishStore(body: IStore) {
+  //   try {
+  //     // Check if the store already exists
+  //     const store = await stores.findById(body.id);
+  //     if (store) {
+  //       return 'storeAlreadyExist';
   //     } else {
-  //       // Subscribe to users channel to receive responses
+  //       // Subscribe to product channel to receive responses
   //       subscriber.subscribe('productChannel');
 
-  //       // Publish user ID
-  //       async function publishUserId(data: any) {
+  //       // Publish store ID
+  //       // eslint-disable-next-line no-inner-declarations
+  //       async function publishStoreId(data: any) {
   //         await publisher.publish('storeChannel', JSON.stringify(data));
   //         console.log(data, 'Store ID published');
   //       }
 
   //       // Publish productId and wait for response
-  //       await publishUserId(body.productId);
+  //       await publishStoreId(body.productId);
 
-  //       // // Wait for response about user
-  //       // const response = await redisResponse(body);
-  //       const response = await new Promise((resolve, reject) => {
+  //       // Wait for response about product
+  //       //const response = await redisResponse(body);
+  //       const response = await new Promise((resolve) => {
   //         subscriber.once('message', (channel, message) => {
-  //           if (channel === 'productChannel') {
-  //             const userData = JSON.parse(message);
-  //             console.log(userData, 'Received user data');
-  //             if (userData.id === body.productId) {
-  //               console.log('product found');
-  //               resolve('yes');
-  //             } else {
-  //               console.log('product not found');
-  //               resolve('no');
-  //             }
+  //           if (channel === 'users_channel') {
+  //               const userData = JSON.parse(message);
+  //               console.log(userData, 'Received user data');
+  //               if (userData.id === body.productId) {
+  //                   console.log('User found');
+  //                   resolve('yes');
+  //               } else {
+  //                   console.log('User not found');
+  //                   resolve('no');
+  //               }
   //           }
-  //         });
   //       });
+  //   });
+  //         // subscriber.once('message', (channel, message) => {
+  //         //   if (channel === 'productChannel') {
+  //         //     const productData = newFunction();
+  //         //     console.log(productData, 'Received product data');
+  //         //     if (productData.id === body.productId) {
+  //         //       console.log('Product found');
+  //         //       resolve('yes');
+  //         //     } else {
+  //         //       console.log('Product not found');
+  //         //       resolve('no');
+  //         //     }
+  //         //   }
+
+  //           // function newFunction(): any {
+  //           //   return JSON.parse(message);
+  //           // }
+  //           // function newFunction(message: string): any {
+  //           //   try {
+  //           //     return JSON.parse(message);
+  //           //   } catch (error) {
+  //           //     console.error('Error parsing JSON:', error);
+  //           //     // Handle the error appropriately, e.g., return a default value or re-throw the error
+  //           //     throw error;
+  //             }
+  //           // }
+  //         // });
+  //       // });
 
   //       if (response === 'yes') {
-  //         console.log(body, 'message');
-  //         return await stores.create(body);
-  //         // return 'rideCreated';
+  //         console.log(body, 'Creating store');
+  //         await stores.create(body);
+  //         return 'storeCreated';
   //       } else {
-  //         console.log('product not found.');
-  //         return 'userNotFound';
+  //         console.log('Product not found.');
+  //         return 'productNotFound';
   //       }
   //     }
   //   } catch (err: any) {
   //     throw new Error(err.message);
   //   }
   // }
+
+  public static async publishStore(body: IStore) {
+    try {
+      // Check if the store already exists
+      const store = await stores.findById(body.id);
+      console.log(store);
+      if (store) {
+        return 'storeAlreadyExist';
+      } else {
+        // Subscribe to store channel to receive responses
+        subscriber.subscribe('storeChannel');
+
+        // Function to publish store ID
+        const publishStoreId = async (data: any) => {
+          await publisher.publish('storeChannel', JSON.stringify(data));
+          console.log(data, 'Store ID published');
+        };
+
+        // Publish productId and wait for response
+        await publishStoreId(body.productId);
+
+        // Wait for response
+        const response = await new Promise((resolve) => {
+          subscriber.once('message', (channel, message) => {
+            if (channel === 'productChannel') {
+              try {
+                const productData = JSON.parse(message);
+                console.log(productData, 'Received data');
+                if (productData.id === body.productId) {
+                  console.log('product found');
+                  resolve('product found');
+                } else {
+                  console.log('product not found');
+                  resolve('no');
+                }
+              } catch (error) {
+                console.error('Error parsing JSON:', error);
+                resolve('no');
+              }
+            }
+          });
+        });
+
+        if (response === 'product found') {
+          console.log(body, 'Creating store');
+          await stores.create(body);
+          return 'storeCreated';
+        } else {
+          console.log('product not found.');
+          return 'productNotFound';
+        }
+      }
+    } catch (err: any) {
+      throw new Error(err.message);
+    }
+  }
 }

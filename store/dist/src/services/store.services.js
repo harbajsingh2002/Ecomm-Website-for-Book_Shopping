@@ -13,9 +13,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StoreServices = void 0;
-const bcrypt_1 = __importDefault(require("bcrypt"));
 const store_model_1 = __importDefault(require("../model/store.model"));
-const redis_client_1 = __importDefault(require("../config/redis.client"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
+// import * as jwt from 'jsonwebtoken';
+const store_model_2 = __importDefault(require("../model/store.model"));
 const ioredis_1 = require("ioredis");
 const subscriber = new ioredis_1.Redis();
 const publisher = new ioredis_1.Redis();
@@ -23,18 +24,12 @@ class StoreServices {
     static createNewStore(body) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                //const { error } = await Store.valStore.validate(req.body)
-                // if (error) {
-                //     return res.status(400).json({
-                //         error: error.details.map((err:any) => err.message.replace(/"/g, ''))
-                //     });
-                // }
-                const { storeName, email, password, contact, address, description } = body;
+                const { storeName, email, password } = body;
                 // Input validation
                 if (!storeName || !email || !password) {
                     throw new Error('Store name, email, and password are required');
                 }
-                const checkStore = yield store_model_1.default.findOne({
+                const checkStore = yield store_model_2.default.findOne({
                     $and: [{ email: body.email }, { isDeleted: false }],
                 });
                 if (checkStore) {
@@ -42,7 +37,7 @@ class StoreServices {
                     throw new Error('Email already existed');
                 }
                 const hashedPassword = yield bcrypt_1.default.hash(body.password, 10);
-                const newStore = yield store_model_1.default.create({
+                const newStore = yield store_model_2.default.create({
                     storeName: body.storeName,
                     email: body.email,
                     password: hashedPassword,
@@ -116,7 +111,7 @@ class StoreServices {
         return __awaiter(this, arguments, void 0, function* (pageNumber = 1, pageSize = 10) {
             try {
                 const skip = (pageNumber - 1) * pageSize;
-                const posts = yield store_model_1.default.aggregate([{ $sample: { size: 40 } }, { $skip: skip }, { $limit: pageSize }]);
+                const posts = yield store_model_2.default.aggregate([{ $sample: { size: 40 } }, { $skip: skip }, { $limit: pageSize }]);
                 return posts;
             }
             catch (err) {
@@ -128,7 +123,7 @@ class StoreServices {
     static updateStore(_id, reqData) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const updatedStore = yield store_model_1.default.findByIdAndUpdate(_id, Object.assign({}, reqData), { new: true, useFindAndModify: true });
+                const updatedStore = yield store_model_2.default.findByIdAndUpdate(_id, Object.assign({}, reqData), { new: true, useFindAndModify: true });
                 return updatedStore;
             }
             catch (err) {
@@ -141,7 +136,7 @@ class StoreServices {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const storeId = reqData.params.id;
-                const store = yield store_model_1.default.findById(storeId);
+                const store = yield store_model_2.default.findById(storeId);
                 //console.log(storeId)
                 // const store = await Store.findOne({ where: { id: storeId.id } });
                 if (!store) {
@@ -149,7 +144,7 @@ class StoreServices {
                 }
                 else {
                     const date = new Date();
-                    const existingStore = yield store_model_1.default.findByIdAndUpdate(storeId, {
+                    const existingStore = yield store_model_2.default.findByIdAndUpdate(storeId, {
                         isDeleted: true,
                         isActive: false,
                         deletedAt: date,
@@ -165,7 +160,7 @@ class StoreServices {
     static getByAttribute(attributes) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const findStore = yield store_model_1.default.findOne(attributes).lean();
+                const findStore = yield store_model_2.default.findOne(attributes).lean();
                 return findStore;
             }
             catch (err) {
@@ -174,24 +169,76 @@ class StoreServices {
         });
     }
     //Publish Message
-    static publishMessage(req, res, message, publisher) {
+    // public static async publishMessage(req: Request, res: Response, message: string, publisher: string) {
+    //   try {
+    //     console.log('Inside service');
+    //     const requestBody = req.body;
+    //     // const message = {
+    //     //   message: requestBody,
+    //     //   date: new Intl.DateTimeFormat('es-ES').format(new Date()),
+    //     // };
+    //     const result = redisClient.publish('channelName', JSON.stringify(message));
+    //     console.log(`Publishing an Event using Redis to: ${JSON.stringify(requestBody)}`);
+    //     return result;
+    //   } catch (err: any) {
+    //     console.error(err);
+    //     throw new Error(err.message);
+    //   }
+    // }
+    static publishMessage(body) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('Inside service');
-                const requestBody = req.body;
-                // const message = {
-                //   message: requestBody,
-                //   date: new Intl.DateTimeFormat('es-ES').format(new Date()),
-                // };
-                const result = redis_client_1.default.publish('channelName', JSON.stringify(message));
-                console.log(`Publishing an Event using Redis to: ${JSON.stringify(requestBody)}`);
-                return result;
+                // Check if the store already exists
+                const store = yield store_model_1.default.findById(body.id);
+                if (store) {
+                    return 'storeAlreadyExist';
+                }
+                else {
+                    // Subscribe to product channel to receive responses
+                    subscriber.subscribe('productChannel');
+                    // Publish store ID
+                    // eslint-disable-next-line no-inner-declarations
+                    function publishStoreId(data) {
+                        return __awaiter(this, void 0, void 0, function* () {
+                            yield publisher.publish('storeChannel', JSON.stringify(data));
+                            console.log(data, 'Store ID published');
+                        });
+                    }
+                    // Publish productId and wait for response
+                    yield publishStoreId(body.productId);
+                    // Wait for response about product
+                    const response = yield new Promise((resolve) => {
+                        subscriber.once('message', (channel, message) => {
+                            if (channel === 'productChannel') {
+                                const productData = JSON.parse(message);
+                                console.log(productData, 'Received product data');
+                                if (productData.id === body.productId) {
+                                    console.log('Product found');
+                                    resolve('yes');
+                                }
+                                else {
+                                    console.log('Product not found');
+                                    resolve('no');
+                                }
+                            }
+                        });
+                    });
+                    if (response === 'yes') {
+                        console.log(body, 'Creating store');
+                        yield store_model_1.default.create(body);
+                        return 'storeCreated';
+                    }
+                    else {
+                        console.log('Product not found.');
+                        return 'productNotFound';
+                    }
+                }
             }
             catch (err) {
-                console.error(err);
                 throw new Error(err.message);
             }
         });
     }
 }
 exports.StoreServices = StoreServices;
+//Need to add this in the produst or store module

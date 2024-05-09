@@ -41,7 +41,11 @@ const response_1 = require("../utilis/messages/response");
 const store_services_1 = require("../services/store.services");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jwt = __importStar(require("jsonwebtoken"));
-const ioredis_1 = require("ioredis");
+// import redisClient from '../config/redis.client';
+// import { channel } from 'diagnostics_channel';
+// import { string } from 'joi';
+// import { Redis } from 'ioredis';
+// import IStore from '../utilis/Istore/Istore';
 class StoreController {
     static createNewStore(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -174,42 +178,43 @@ class StoreController {
         });
     }
     //Publisher mesage
-    static publishMessage(req, res, message) {
+    // public static async publishMessage(req: Request, res: Response, message: any) {
+    //   try {
+    //     const requestBody = req.body;
+    //     console.log('requestBody', requestBody);
+    //     const message = {
+    //       message: requestBody,
+    //       channelName: 'storeChannel',
+    //       // date: new Intl.DateTimeFormat('es-ES').format(new Date()),
+    //     };
+    //     let channelName: string = 'storeChannel';
+    //     const publisher = new Redis();
+    //     await publisher.subscribe('productChannel', (message) => {
+    //       console.log(message); // 'message'
+    //     });
+    //     //console.log(`Publishing an Event using Redis to: ${JSON.stringify(requestBody)}`);
+    //     res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, message, 'Publishing a message using Redis successfull'));
+    //     return message;
+    //   } catch (err: any) {
+    //     //logger.error(MESSAGE.errorLog('userDelete', 'userController', err))
+    //     res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.INTERNET_SERVER_ERROR));
+    //   }
+    // }
+    static publishMessage(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const requestBody = req.body;
-                console.log('requestBody', requestBody);
-                const message = {
-                    message: requestBody,
-                    channelName: 'storeChannel',
-                    // date: new Intl.DateTimeFormat('es-ES').format(new Date()),
-                };
-                let channelName = 'storeChannel';
-                const publisher = new ioredis_1.Redis();
-                yield publisher.subscribe('productChannel', (message) => {
-                    console.log(message); // 'message'
-                });
-                //console.log(`Publishing an Event using Redis to: ${JSON.stringify(requestBody)}`);
-                res.status(response_1.STATUS_CODE.SUCCESS).json((0, response_1.successAction)(response_1.STATUS_CODE.SUCCESS, message, 'Publishing a message using Redis successfull'));
-                return message;
+                const data = yield store_services_1.StoreServices.createNewStore(req.body);
+                if (data) {
+                    res.status(response_1.STATUS_CODE.SUCCESS).json((0, response_1.successAction)(response_1.STATUS_CODE.SUCCESS, data, response_1.MESSAGE.alreadyExist('product')));
+                }
+                else {
+                    res.status(response_1.STATUS_CODE.SUCCESS).json((0, response_1.successAction)(response_1.STATUS_CODE.SUCCESS, data, response_1.MESSAGE.add('product')));
+                }
             }
             catch (err) {
-                //logger.error(MESSAGE.errorLog('userDelete', 'userController', err))
-                res.status(response_1.STATUS_CODE.BAD_REQUEST).json((0, response_1.failAction)(response_1.STATUS_CODE.BAD_REQUEST, err.MESSAGE, response_1.MESSAGE.INTERNET_SERVER_ERROR));
+                res.status(response_1.STATUS_CODE.BAD_REQUEST).json((0, response_1.failAction)(response_1.STATUS_CODE.BAD_REQUEST, response_1.MESSAGE.SOMETHING_WENT_WRONG));
             }
         });
     }
 }
 exports.StoreController = StoreController;
-// public static async publishMessage(req: Request, res: Response,body :IStore) {
-//   try {
-//     const data = await StoreServices.createNewStore(req.body);
-//     if (data== "Product already Exist"){
-//       res.status((STATUS_CODE.SUCCESS).json(successResponse(STATUS_CODE.SUCCESS,data,MESSAGE))
-//     }else {
-//       res.status(STATUS_CODE.SUCCESS).json(successResponse(STATUS_CODE.SUCCESS, data, MESSAGE.add('product')));
-//     }
-//   } catch (err:any) {
-//     res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, MESSAGE.SOMETHING_WENT_WRONG));
-//   }
-// }

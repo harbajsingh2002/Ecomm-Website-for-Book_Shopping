@@ -18,6 +18,8 @@ router.get('/', (req, res, next) => (0, store_validation_1.default)(req, res, ne
 router.get('/:id', (req, res, next) => (0, store_validation_1.default)(req, res, next, 'store'), store_controller_1.StoreController.getStoreById);
 ///Route to update store
 router.put('/:id', (req, res, next) => (0, store_validation_1.default)(req, res, next, 'store'), store_controller_1.StoreController.updateStore);
+//Routr to publishe message
+router.post('/publishers', store_controller_1.StoreController.publishMessage);
 ///Route to delete store
 router.delete('/:id', store_controller_1.StoreController.deleteStore);
 exports.default = router;

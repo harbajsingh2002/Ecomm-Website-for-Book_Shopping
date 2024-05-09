@@ -5,13 +5,13 @@ const redisSubscriber = new Redis();
 
 export function subscribeAll() {
   const channelName = 'storeChannel';
-  const subscriber = '';
+  // const subscriber = '';
 
   redisSubscriber.subscribe(channelName);
 
   redisSubscriber.on('message', async (channel, message) => {
     console.log(`received the store data from ${channel}:`, JSON.parse(message));
-    await BooksServices.subscribeToMessages(channelName, message, subscriber);
+    await BooksServices.subscribeToMessages(channelName, message);
   });
 }
 

@@ -16,7 +16,11 @@ exports.MESSAGE = {
     LOGIN: 'Login successfully',
     USER_NOT_FOUND: 'user not found',
     INTERNET_SERVER_ERROR: 'Internet server error',
+    // ALREADY_EXIST: 'already Exist',
     VALIDATION_ERROR: 'Validation error. Please check your params and try again.',
+    alreadyExist: (labal) => {
+        return `${labal} alreadyExist`;
+    },
     Invalidlogin: 'Invalid login credentials. Please check and try again.',
     add: (labal) => {
         return `${labal} added successfully.`;

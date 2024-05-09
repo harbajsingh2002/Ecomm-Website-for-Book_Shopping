@@ -1,4 +1,4 @@
-import redis, { createClient } from 'redis';
+import { createClient } from 'redis';
 // import dotenv, { config } from 'dotenv';
 // dotenv.config();
 
@@ -24,8 +24,4 @@ redisClient.on('error', (error: any) => {
   console.log('Redis connection error:', error);
 });
 
-// await client.connect();
-// await client.set('foo', 'bar');
-// const value = await client.get('foo');
-// console.log(value)
 export default redisClient;

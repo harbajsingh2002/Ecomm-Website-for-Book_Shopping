@@ -11,6 +11,7 @@ const helmet_1 = __importDefault(require("helmet"));
 const cors_1 = __importDefault(require("cors"));
 const ioRedis_client_1 = __importDefault(require("./src/config/ioRedis.client"));
 const redis_client_1 = __importDefault(require("./src/config/redis.client"));
+// import Redis from 'ioredis';
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());

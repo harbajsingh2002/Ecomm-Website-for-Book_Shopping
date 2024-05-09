@@ -1,8 +1,7 @@
-import mongoose, { Schema, model } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import IStore from '../utilis/Istore/Istore';
 import timeStamp from '../utilis/moment/moment';
 import { nanoid } from 'nanoid';
-import { required, string } from 'joi';
 
 export const storeSchema = new Schema<IStore>({
   _id: {
@@ -45,6 +44,10 @@ export const storeSchema = new Schema<IStore>({
   isDeleted: {
     type: Boolean,
     default: false,
+  },
+  productId: {
+    type: String,
+    required: true,
   },
   // message: {
   //   type: string,
