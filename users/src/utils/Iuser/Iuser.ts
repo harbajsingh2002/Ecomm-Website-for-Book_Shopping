@@ -21,9 +21,11 @@ export default interface IUser extends Document {
   createdAt: Date;
   timeStamp: number;
   resetPassword(): string;
+  // eslint-disable-next-line semi
 }
 
-export default interface IUserLogin extends Document {
+// IUserLogin interface
+export interface IUserLogin extends Document {
   email: string;
   password: string;
 }

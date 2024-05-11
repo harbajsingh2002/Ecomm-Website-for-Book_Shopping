@@ -20,6 +20,8 @@ const port = process.env.PORT || 3002;
 
 app.use(express.json());
 
+app.use(express.urlencoded({ extended: true }));
+
 // API Routes
 app.use('/api/store', storeRouter);
 

@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { MESSAGE, STATUS_CODE, failAction, successAction } from '../utilis/messages/response';
 import { BooksServices } from '../services/products.services';
 import Redis from 'ioredis';
+import logger from '../utilis/logger';
 // const redisSubscriber = new Redis();
 
 export class productController {
@@ -14,7 +15,7 @@ export class productController {
         res.status(STATUS_CODE.NOT_CREATED);
       }
     } catch (err: any) {
-      // logger.error(message.errorLog('productAdd', 'productController', err))
+      logger.error(MESSAGE.errorLog('addProduct', 'productController', err));
       res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.SOMETHING_WENT_WRONG));
     }
   }
@@ -32,7 +33,7 @@ export class productController {
 
       res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, findBook, MESSAGE.fetch('Store')));
     } catch (err: any) {
-      // logger.error(MESSAGE.errorLog('userList', 'userController', err))
+      logger.error(MESSAGE.errorLog('getBookById', 'productController', err));
       res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.SOMETHING_WENT_WRONG));
     }
   }
@@ -44,7 +45,7 @@ export class productController {
       const bookData = await BooksServices.getAllbooks();
       res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, bookData, MESSAGE.fetch('Book')));
     } catch (err: any) {
-      //logger.error(MESSAGE.errorLog('bookList', 'pControductroller', err))
+      logger.error(MESSAGE.errorLog('bookListing', 'productController', err));
       res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.SOMETHING_WENT_WRONG));
     }
   }
@@ -67,7 +68,7 @@ export class productController {
       }
     } catch (err: any) {
       console.log('err', err.MESSAGE);
-      //logger.error(MESSAGE.errorLog('storeUpdate', 'storeController', err))
+      logger.error(MESSAGE.errorLog('updateBook', 'productController', err));
       res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.SOMETHING_WENT_WRONG));
     }
   }
@@ -81,7 +82,7 @@ export class productController {
       }
       res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, MESSAGE.delete('Book')));
     } catch (err: any) {
-      //logger.error(MESSAGE.errorLog('bookDelete', 'productController', err))
+      logger.error(MESSAGE.errorLog('deleteBook', 'productController', err));
       res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.SOMETHING_WENT_WRONG));
     }
   }
@@ -96,7 +97,7 @@ export class productController {
         res.status(STATUS_CODE.NOT_CREATED);
       }
     } catch (err: any) {
-      // logger.error(message.errorLog('productAdd', 'productController', err))
+      logger.error(MESSAGE.errorLog('uploadBookImage', 'productController', err));
       res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.SOMETHING_WENT_WRONG));
     }
   }
@@ -182,8 +183,9 @@ export class productController {
         }
 
         res.status(200).json({ success: true, message: 'Message processed successfully' });
-      } catch (error) {
-        console.error('Error processing message:', error);
+      } catch (err: any) {
+        console.error('Error processing message:', err);
+        logger.error(MESSAGE.errorLog('subscribeToStore', 'productController', err));
         res.status(500).json({ success: false, error: 'Failed to process message' });
       }
     });

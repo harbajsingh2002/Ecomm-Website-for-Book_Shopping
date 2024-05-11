@@ -1,4 +1,4 @@
-export const successAction = (statusCode: number, data: {}, message = 'Success') => {
+export const successAction = (statusCode: number, data: any, message = 'Success') => {
   return { statusCode, data, message };
 };
 
@@ -13,7 +13,6 @@ export const MESSAGE = {
   LOGIN: 'Login successfully',
   USER_NOT_FOUND: 'user not found',
   INTERNET_SERVER_ERROR: 'Internet server error',
-  // ALREADY_EXIST: 'already Exist',
   VALIDATION_ERROR: 'Validation error. Please check your params and try again.',
 
   alreadyExist: (labal: string) => {

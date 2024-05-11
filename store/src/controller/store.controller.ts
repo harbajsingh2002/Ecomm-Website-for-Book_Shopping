@@ -4,6 +4,7 @@ import { failAction, MESSAGE, STATUS_CODE, successAction } from '../utilis/messa
 import { StoreServices } from '../services/store.services';
 import bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
+import logger from '../utilis/logger';
 // import redisClient from '../config/redis.client';
 // import { channel } from 'diagnostics_channel';
 // import { string } from 'joi';
@@ -18,7 +19,7 @@ export class StoreController {
       }
       res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, data, MESSAGE.add('Store')));
     } catch (err: any) {
-      // logger.error(message.errorLog('productAdd', 'productController', err))
+      logger.error(MESSAGE.errorLog('addStore', 'storeController', err));
       res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.SOMETHING_WENT_WRONG));
     }
   }
@@ -48,6 +49,7 @@ export class StoreController {
 
       res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, { _id: store._id, email: store.email, token: token }, MESSAGE.LOGIN));
     } catch (err: any) {
+      logger.error(MESSAGE.errorLog('loginStore', 'storeController', err));
       res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.INTERNET_SERVER_ERROR));
     }
   }
@@ -63,6 +65,7 @@ export class StoreController {
 
       res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, findStore, MESSAGE.fetch('Store')));
     } catch (err: any) {
+      logger.error(MESSAGE.errorLog('getStoreById', 'storeController', err));
       res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.INTERNET_SERVER_ERROR));
     }
   }
@@ -74,7 +77,7 @@ export class StoreController {
       const storeData = await StoreServices.getAllStore();
       res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, storeData, MESSAGE.fetch('Store')));
     } catch (err: any) {
-      //logger.error(MESSAGE.errorLog('storeList', 'storeController', err))
+      logger.error(MESSAGE.errorLog('storeListing', 'storeController', err));
       res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.INTERNET_SERVER_ERROR));
     }
   }
@@ -98,7 +101,7 @@ export class StoreController {
       }
     } catch (err: any) {
       console.log('err', err.MESSAGE);
-      //logger.error(MESSAGE.errorLog('storeUpdate', 'storeController', err))
+      logger.error(MESSAGE.errorLog('updateStore', 'storeController', err));
       res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.INTERNET_SERVER_ERROR));
     }
   }
@@ -112,7 +115,7 @@ export class StoreController {
       }
       res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, MESSAGE.delete('Store')));
     } catch (err: any) {
-      //logger.error(MESSAGE.errorLog('userDelete', 'userController', err))
+      logger.error(MESSAGE.errorLog('deleteStore', 'storeController', err));
       res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.INTERNET_SERVER_ERROR));
     }
   }
@@ -147,13 +150,19 @@ export class StoreController {
 
   public static async publishMessage(req: Request, res: Response) {
     try {
-      const data = await StoreServices.publishStore(req.body);
-      console.log('bnm', data);
-      if (data) {
-        res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, data, MESSAGE.alreadyExist('store')));
+      const email = req.body.email;
+      const data = await StoreServices.publishStore(email, req.body);
+
+      console.log('store already existed with same email', data);
+      if (data === 'storeAlreadyExist') {
+        res.status(STATUS_CODE.EMAIL_OR_USER_EXIST).json(failAction(STATUS_CODE.NOT_CREATED, data, MESSAGE.alreadyExist('store')));
+      } else if (data === 'storeCreated') {
+        res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, data, MESSAGE.add('store')));
+      } else {
+        res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, MESSAGE.SOMETHING_WENT_WRONG));
       }
-      res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, data, MESSAGE.add('store')));
     } catch (err: any) {
+      // logger.error(MESSAGE.errorLog('publishMessage', 'storeController', err));
       res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, MESSAGE.SOMETHING_WENT_WRONG));
     }
   }

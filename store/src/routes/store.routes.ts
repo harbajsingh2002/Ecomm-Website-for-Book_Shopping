@@ -21,7 +21,7 @@ router.put('/:id', (req, res, next) => validationMiddleware(req, res, next, 'sto
 
 //Routr to publishe message
 // router.post('/publishers', StoreController.publishMessage);
-router.post('/publishers', StoreController.publishMessage);
+router.post('/publishers', (req, res, next) => validationMiddleware(req, res, next, 'store'), StoreController.publishMessage);
 
 ///Route to delete store
 router.delete('/:id', StoreController.deleteStore);

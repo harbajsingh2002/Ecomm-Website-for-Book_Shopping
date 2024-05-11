@@ -2,8 +2,7 @@ import { Request, Response } from 'express';
 //import { valStore, loginStore } from "../validation/store.validation";
 import { failAction, MESSAGE, STATUS_CODE, successAction } from '../utils/messages/response';
 import { UserServices } from '../services/user.services';
-import IUser from '../utils/Iuser/Iuser';
-import User from '../models/user.model';
+import logger from '../utils/logger';
 
 export class userController {
   //Cfreate User
@@ -16,7 +15,7 @@ export class userController {
         res.status(STATUS_CODE.NOT_CREATED);
       }
     } catch (err: any) {
-      // logger.error(message.errorLog('productAdd', 'productController', err))
+      logger.error(MESSAGE.errorLog('userAdd', 'userController', err));
       res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.INTERNAL_SERVER_ERROR));
     }
   }
@@ -24,19 +23,18 @@ export class userController {
   //Login User
   public static async login(req: Request, res: Response) {
     try {
-      const { email, password } = req.body;
-
       const isUser = await UserServices.login(req.body);
 
       if (isUser) {
-        res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, isUser, MESSAGE.LOGIN));
-      } else if (isUser === 'invalidStore') {
+        res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, MESSAGE.login));
+      } else if (isUser === '') {
         res.status(STATUS_CODE.SUCCESS).json(failAction(STATUS_CODE.SUCCESS, isUser, MESSAGE.Invalidlogin));
       } else isUser === 'notExist';
       {
         res.status(STATUS_CODE.SUCCESS).json(failAction(STATUS_CODE.SUCCESS, MESSAGE.notExist('User')));
       }
     } catch (err: any) {
+      logger.error(MESSAGE.errorLog('loginuser', 'userController', err));
       res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.INTERNAL_SERVER_ERROR));
     }
   }
@@ -55,7 +53,7 @@ export class userController {
 
       res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, findUser, MESSAGE.fetch('Store')));
     } catch (err: any) {
-      // logger.error(MESSAGE.errorLog('userList', 'userController', err))
+      logger.error(MESSAGE.errorLog('findUserById', 'userController', err));
       res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.INTERNAL_SERVER_ERROR));
     }
   }
@@ -67,7 +65,7 @@ export class userController {
       const userData = await UserServices.findAllUser();
       res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, userData, MESSAGE.fetch('User')));
     } catch (err: any) {
-      //logger.error(MESSAGE.errorLog('storeList', 'storeController', err))
+      logger.error(MESSAGE.errorLog('findAlluser', 'userController', err));
       res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.INTERNAL_SERVER_ERROR));
     }
   }
@@ -88,6 +86,7 @@ export class userController {
       }
     } catch (err: any) {
       console.log('err', err.MESSAGE);
+      logger.error(MESSAGE.errorLog('updateUser', 'userController', err));
       res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.INTERNAL_SERVER_ERROR));
     }
   }
@@ -96,9 +95,11 @@ export class userController {
   public static async deleteUser(req: Request, res: Response) {
     try {
       const data = await UserServices.deleteUser(req);
-      res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, MESSAGE.delete('User')));
+      if (data) {
+        res.status(STATUS_CODE.SUCCESS).json(successAction(STATUS_CODE.SUCCESS, data, MESSAGE.delete('User')));
+      }
     } catch (err: any) {
-      //logger.error(MESSAGE.errorLog('userDelete', 'userController', err))
+      logger.error(MESSAGE.errorLog('deleteUser', 'userController', err));
       res.status(STATUS_CODE.BAD_REQUEST).json(failAction(STATUS_CODE.BAD_REQUEST, err.MESSAGE, MESSAGE.INTERNAL_SERVER_ERROR));
     }
   }

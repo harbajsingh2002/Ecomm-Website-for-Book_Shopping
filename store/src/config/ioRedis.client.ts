@@ -1,4 +1,4 @@
-import redis, { Redis } from 'ioredis';
+import redis from 'ioredis';
 // import dotenv, { config } from 'dotenv';
 // import { createClient } from 'redis';
 // dotenv.config();

@@ -171,16 +171,27 @@ export class BooksServices {
   public static async subscribeToMessages(channelName: string, message: string) {
     try {
       if (channelName === 'storeChannel') {
-        const bookData: any = JSON.parse(message);
-        console.log('in', bookData);
-        // Process the received book-related data
-        const book = await Books.findOne({ where: { id: bookData } });
-        if (book) {
-          console.log('book', book);
-          // Process the user data as needed
+        console.log('Received message:', message);
 
+        let bookData: any;
+        try {
+          bookData = JSON.parse(message);
+        } catch (parseError) {
+          console.error('Error parsing message JSON:', parseError);
+          // If parsing fails, publish the original message
+          await publisher.publish('productChannel', message);
+          return; // Don't proceed further if parsing fails
+        }
+
+        console.log('Parsed book data:', bookData);
+
+        const book = await Books.findOne({ id: bookData });
+        if (book) {
+          console.log(' found book', book);
+          // Process the user data as needed
           await publisher.publish('productChannel', JSON.stringify(book));
         } else {
+          console.log('Book not found:', bookData);
           await publisher.publish('productChannel', bookData);
         }
       }

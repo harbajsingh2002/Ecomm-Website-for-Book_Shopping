@@ -1,10 +1,9 @@
-import stores from '../model/store.model';
 import bcrypt from 'bcrypt';
 // import * as jwt from 'jsonwebtoken';
 import Store from '../model/store.model';
 import IStore from '../utilis/Istore/Istore';
 import { Redis } from 'ioredis';
-const subscriber = new Redis();
+const redisSubscriber = new Redis();
 const publisher = new Redis();
 export class StoreServices {
   public static async createNewStore(body: IStore) {
@@ -250,16 +249,16 @@ export class StoreServices {
   //   }
   // }
 
-  public static async publishStore(body: IStore) {
+  public static async publishStore(req: Request, body: IStore) {
     try {
-      // Check if the store already exists
-      const store = await stores.findById(body.id);
-      console.log(store);
-      if (store) {
+      const existingStore = await Store.findOne({ email: body.email });
+      console.log('storeAlreadyExist', existingStore);
+
+      if (existingStore) {
         return 'storeAlreadyExist';
       } else {
-        // Subscribe to store channel to receive responses
-        subscriber.subscribe('storeChannel');
+        // Subscribe product channel to receive responses
+        redisSubscriber.subscribe('productChannel');
 
         // Function to publish store ID
         const publishStoreId = async (data: any) => {
@@ -267,26 +266,30 @@ export class StoreServices {
           console.log(data, 'Store ID published');
         };
 
+        // Publish store ID and wait for response
+        await publishStoreId(body.id);
+
         // Publish productId and wait for response
         await publishStoreId(body.productId);
 
         // Wait for response
         const response = await new Promise((resolve) => {
-          subscriber.once('message', (channel, message) => {
+          redisSubscriber.once('message', (channel, message) => {
             if (channel === 'productChannel') {
               try {
                 const productData = JSON.parse(message);
                 console.log(productData, 'Received data');
-                if (productData.id === body.productId) {
+
+                if (productData && productData.id === body.id) {
                   console.log('product found');
                   resolve('product found');
                 } else {
                   console.log('product not found');
-                  resolve('no');
+                  resolve('product not found');
                 }
               } catch (error) {
-                console.error('Error parsing JSON:', error);
-                resolve('no');
+                console.error('Error:', error);
+                resolve('product not found');
               }
             }
           });
@@ -294,11 +297,15 @@ export class StoreServices {
 
         if (response === 'product found') {
           console.log(body, 'Creating store');
-          await stores.create(body);
+
+          // Create the new store
+          await Store.create(body);
+          console.log('Store created:', body);
+
           return 'storeCreated';
         } else {
           console.log('product not found.');
-          return 'productNotFound';
+          return 'Product not Added';
         }
       }
     } catch (err: any) {

@@ -1,4 +1,4 @@
-export const successAction = (statusCode: number, data: {}, message = 'Success') => {
+export const successAction = (statusCode: number, data: object, message = 'Success') => {
   return { statusCode, data, message };
 };
 
@@ -15,12 +15,15 @@ export const MESSAGE = {
   USER_NOT_FOUND: 'user not found',
   EMAIL_ALREADY_EXISTED: 'Email already existed',
   INTERNAL_SERVER_ERROR: 'Internal server error',
-
   VALIDATION_ERROR: 'Validation error. Please check your params and try again.',
 
   Invalidlogin: 'Invalid login credentials. Please check and try again.',
+
   add: (labal: string) => {
     return `${labal} added successfully.`;
+  },
+  login: (label: string) => {
+    return `${label} login successfully`;
   },
   fetch: (labal: string) => {
     return `${labal} fetched successfully.`;
@@ -34,6 +37,7 @@ export const MESSAGE = {
   notExist: (labal: string) => {
     return `${labal} not exist.`;
   },
+
   errorLog: (functionName: string, controllerName: string, err: any) => {
     return `${functionName} ${controllerName} Error @ ${err}`;
   },

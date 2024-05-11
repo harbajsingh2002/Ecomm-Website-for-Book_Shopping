@@ -51,7 +51,8 @@ export class UserServices {
       // Find the store based on the provided email
       const user = await User.findOne({ email });
       if (!user) {
-        throw new Error('User not found');
+        // throw new Error('User not found');
+        return user;
       }
       if (user) {
         const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -62,8 +63,8 @@ export class UserServices {
           const token = jwt.sign({ userId: user._id, email }, process.env.TOKEN_KEY!, { expiresIn: '30min' });
           return { _id: user._id, email: user.email, token: token };
         }
-      } else if (user) {
-        return 'invalidUser';
+      } else if (user == 'invalidUser') {
+        return user;
       } else {
         return 'notExist';
       }
@@ -127,7 +128,7 @@ export class UserServices {
       const user = await User.findById(userId);
 
       if (!user) {
-        return 'notExist';
+        return user;
       } else {
         const date = new Date();
         const existingUser = await User.findByIdAndUpdate(userId, {
