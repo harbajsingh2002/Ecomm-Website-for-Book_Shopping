@@ -18,7 +18,7 @@ const ioRedisClient = new redis({
 
 // ioRedisClient.connect();
 ioRedisClient.on('connect', () => {
-  console.log('onnected to ioredis successfully!!');
+  console.log('connected to ioredis successfully!!');
 });
 ioRedisClient.on('error', (error: any) => {
   console.log('Redis connection error:', error);
@@ -32,3 +32,20 @@ export default ioRedisClient;
 //     port: 16478,
 //   },
 // });
+// import redis from 'ioredis';
+
+// const ioRedisClient = new redis({
+//   port: 5331,
+//   host: 'localhost',
+//   password: '',
+// });
+
+// ioRedisClient.on('connect', () => {
+//   console.log('Connected to Redis server successfully!!');
+// });
+
+// ioRedisClient.on('error', (error: any) => {
+//   console.log('Redis connection error:', error);
+// });
+
+// export default ioRedisClient;

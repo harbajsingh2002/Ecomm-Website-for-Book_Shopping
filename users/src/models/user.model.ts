@@ -2,15 +2,9 @@ import mongoose, { Schema, model } from 'mongoose';
 import timeStamp from '../utils/moment/moment';
 import { Role } from '../utils/role/role';
 import IUser from '../utils/Iuser/Iuser';
-import { nanoid } from 'nanoid';
-import crypto from 'crypto';
-import { Request, Response } from 'express'; // Import Request and Response types
+import crypto, { randomUUID } from 'crypto';
 
 export const userSchema = new Schema<IUser>({
-  _id: {
-    type: String,
-    default: () => nanoid(),
-  },
   name: {
     firstName: {
       type: String,
@@ -39,10 +33,13 @@ export const userSchema = new Schema<IUser>({
     required: false,
     unique: true,
   },
-  address: {
-    type: String,
-    required: false,
-  },
+  address: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: 'Address',
+      required: true,
+    },
+  ],
   role: {
     type: String,
     enum: Role,
