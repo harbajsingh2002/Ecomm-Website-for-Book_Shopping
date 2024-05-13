@@ -9,12 +9,14 @@ The back-end is built using NodeJS and ExpressJS. The data is stored in a MongoD
 Overall, the e-commerce platform is designed to be a scalable, robust, and secure system that allows customers to shop for products(Books) online with ease. The microservices architecture and use of DevOps tools ensures that the platform can be easily maintained and updated while minimizing downtime.
 
 ### Technologies Used:
+
 - Nodejs
 - MongoDB
 - Git
 - Github
 
 ### Features:
+
 - User authentication: customers can register, login, and manage their profile information
 - Product browsing: customers can browse products by category, filter by price or other attributes, and search for specific products
 - Shopping cart: customers can add items to their cart, edit the quantity of items, and remove items from their cart
@@ -23,10 +25,11 @@ Overall, the e-commerce platform is designed to be a scalable, robust, and secur
 - Admin panel: administrators can manage product inventory, view and fulfill orders, and manage customer information
 
 ### Installation and Setup Instructions
+
 Must have NodeJs installed in your machine
 Clone the repository to your local machine
 
-Install dependencies by running npm install in both the root directory and the client directory 
+Install dependencies by running npm install in both the root directory and the client directory
 `npm install`
 
 To Start Server:
@@ -35,3 +38,4 @@ To Start Server:
 Manual Testing:
 Postman was used for manual testing in this application.
 Every module has its own port.
+harbaj
