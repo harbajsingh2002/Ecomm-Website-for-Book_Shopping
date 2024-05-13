@@ -27,7 +27,7 @@ async function getAddressByIds(req: Request, res: Response) {
   }
 }
 
-// update address
+// update address of the user
 
 async function updateAddresses(req: Request, res: Response) {
   try {
